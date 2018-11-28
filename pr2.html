@@ -25,351 +25,50 @@
     function translate(x,y) {
     return "translate("+x+","+y+")";
     }
-    
-    function get_line_data(data) {
-        let arr = [];
-        let par_obj =[{team:"Binggrae", values:[]},
-        {team: "Chungbo", values:[]},
-        {team : "Doosan", values:[]},
-        {team : "Haitai", values:[]},
-        {team : "Hanhwa", values:[]},
-        {team:"Heroes", values:[]},
-        {team:"Hyundai", values:[]},
-        {team:"KIA", values:[]},
-        {team:"KT", values:[]},
-        {team:"LG", values:[]},
-        {team:"Lotte", values:[]},
-        {team:"MBC", values:[]},
-        {team:"NC", values:[]},
-        {team:"Nexen", values:[]},
-        {team:"OB", values:[]},
-        {team:"Pacific", values:[]},
-        {team:"SBW", values:[]},
-        {team:"SK", values:[]},
-        {team:'Sammi', values:[]},
-        {team:"Samsung", values:[]}];
-
-        for(let i=0; i<par_obj.length ; i++){
-            for(let j=0; j<data.length; j++){
-                for(let k=0; k<data[j].rankings.length; k++){
-                    if (par_obj[i].team == data[j].rankings[k].team){
-                        let empty_obj = {};
-                        empty_obj.year = data[j].year;
-                        empty_obj.win_rate = data[j].rankings[k].win_rate;
-                        empty_obj.diff_game = data[j].rankings[k].diff_game;
-                        par_obj[i].values.push(empty_obj);
-                    }
-                }
-            }
-        }
-        return par_obj
+    function data_by_selected(data, selected){
+        let selected_data = data.filter(function(d) {return d.key === selected});
+        console.log(selected_data)
+        let counted = d3.nest()
+                        .key(function(d) {return d.selected;})
+                        .rollup(function(v) {return v.length;})
+                        .entries(selected_data);
+        // console.log(JSON.stringify(counted))
+        return counted
     }
-
-    function data_by_year_line(data, selectyear){
-        let new_arr =[];
-        for (let i=0;i<data.length;i++){
-            for (let j=0;j<data[i].values.length;j++){
-                if(data[i].values[j].year == selectyear){
-                    new_arr.push(data[i])
-            }
-        }
-        }
-        return new_arr
-    }
-
-    function get_table_data(data){
-        let arr =[];
-        for(let i = 0; i<data.length;i++){
-            let obj ={};
-            obj.year = data[i].year
-            let ch_obj = {};
-            ch_obj.value =[];
-            for (let j=0;j<data[i].rankings.length;j++){
-                ch_arr = [];
-                ch_arr.push(data[i].rankings[j].rank)
-                ch_arr.push(data[i].rankings[j].team)
-                ch_arr.push(data[i].rankings[j].W)
-                ch_arr.push(data[i].rankings[j].D)
-                ch_arr.push(data[i].rankings[j].L)
-                ch_arr.push(data[i].rankings[j].win_rate)
-                ch_arr.push(data[i].rankings[j].diff_game)
-                ch_obj.value.push(ch_arr)
-            }
-            obj.value = ch_obj
-            arr.push(obj)
-        }
-        return arr
-    }
-
-    function data_by_year_table_bar(data, year){
-        for(let i=0;i<data.length;i++){
-            if (data[i].year == year){
-                let dataset = data[i].value
-                return dataset
-            }
-        }
-    }
-    let bardata_sex = d3.csv("/data/maryland_accident_dataset_preprocessed", function(data){
-        data.forEach(function(d){
-            report_no = d.REPORT_NO;
-            sex_code = d.SEX_CODE;
-        });
-    });
-    let bardataByReport = d3.nest()
-                            .key(function(d) {return d.REPORT_NO;})
-                            .entries(bardata_sex);
-
-    let bardataCount = d3.nest()
-                        .key(function(d) {return d.REPORT_NO;})
-                        .rollup(function(v) {return v.length})
-                        .entries(bardata_sex);
-
     function get_bar_data(data){
-        let arr=[];
-
-        for (let i=0;i<data.length;i++){
+        let arr = [];
+        data.forEach(function(x){
             let obj={};
-            obj.year = data[i].year
-            let ch_arr = [];
-            for  (let j=0;j<data[i].rankings.length;j++){
-                let ch_obj={};
-                ch_obj.team = data[i].rankings[j].team
-                ch_obj.W = data[i].rankings[j].W
-                ch_obj.D = data[i].rankings[j].D
-                ch_obj.L = data[i].rankings[j].L
-                ch_arr.push(ch_obj)
-            }
-            obj.value = ch_arr
+            obj.REPORT_NO = x.REPORT_NO
+            obj.SEX_CODE = x.SEX_CODE
+            obj.CONDITION_CODE = x.CONDITION_CODE
+            obj.DAMAGE_CODE = x.DAMAGE_CODE
+            //parsing 필요
+            obj.TIME = x.TIME
+            obj.AGE = x.AGE
             arr.push(obj)
-        }
+        })
         return arr
-    }
-    let select_box_data = [1982,1983,1984,1985,1986,1987,1988,1989, 
-                       1990,1991,1992,1993,1994,1995,1995,1996,1997,1998,
-                       2001,2002,2003,2004,2005,2006,2007,2008,2009,
-                       2010,2011,2012,2013,2014,2015,2016,2017]; 
-    let select_box_data_win_diff = ["WR", "DG"];
-    let select_box_data_W_D_L = ["W","D","L"];
+    }    
 
-    d3.json("data.json").then(function(data){
-        let show_year = 2016;
+    d3.csv("./maryland_accident_dataset_preprocessed_v1.2.csv").then(function(data){
         let total_bar_data = get_bar_data(data);
-        let total_line_data = get_line_data(data);
-        let total_table_data = get_table_data(data);
-        makevis(total_table_data, total_bar_data, total_line_data, show_year);
-    });
+        makevis(total_bar_data);
+        });
 
 
-    let makevis= function(total_table_data, total_bar_data, total_line_data, year){
+    let makevis= function(total_bar_data){
         //table
-        let table_width= 700 - margin.left - margin.right;
-        let table_height = 300 - margin.top - margin.bottom;
-
-        let columnLabel = ["rank", "team", "W", "D", "L", "win_rate", "diff_game"];
-        
-        let svg = body.append("svg")
-            .attr("width", table_width + margin.left + margin.right)
-            .attr("height", table_height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform","translate("+ margin.left + ","+ 
-            margin.top + ")");
-
-        let tablebodysvg = svg.append("g").attr("class", "chart-group");
-        let tableheadersvg = svg.append("g").attr("class", "chrat-group").append("g").attr("class","col-header");
-
-        let colHeaderCell = tableheadersvg.selectAll('.col-header-cell')
-                            .data(columnLabel);
-
-        let updateTable = function(data){
-            
-            let value = data.value
-            let cellH = table_height / (value.length+1);
-            let cellW = table_width / (value[0].length);
-
-            colHeaderCell.enter().append("rect")
-                .attr("class", "col-header-cell")
-                .attr("width", cellW)
-                .attr("height", cellH)
-                .attr("x", function(d, i){
-                    return i * cellW
-                })
-                .attr("y", 0)
-                .style("fill","#eee");
-            
-
-            colHeaderCell.enter().append("text")
-                .attr("class", "col-header-cell")
-                .attr("width", cellW)
-                .attr("height", cellH)
-                .attr("x", function(d, i){
-                    return i * cellW
-                })
-                .attr("y", 0)
-                .attr("dx", cellW/2)
-                .attr("dy", cellH/4*3)
-                .style("fill","black")
-                .style("text-anchor","middle")
-                .text(function(d, i){return d;});
-            
-                
-            let row = svg.selectAll(".cell.row")
-                        .data(value, d=>d.team)
-
-            row
-                .exit()
-                .remove();
-            
-            row
-                .enter()
-                .append("g")
-                .attr("class", "cell row")
-                .each(function(d, pi){
-                let cell = d3.select(this)
-                            .selectAll(".cell")
-                            .data(d);
-                    cell.enter().append("rect")
-                        .attr("class", "cell")
-                        .attr("width", cellW)
-                        .attr("height", cellH)
-                        .attr("x", function(d, i){
-                            return i * cellW
-                        })
-                        .attr("y", function(d, i){return pi * cellH + cellH})
-                        .attr("fill", "white")
-                        .attr("stroke","silver")
-                    cell.enter().append("text")
-                        .attr("class", "cell-content")
-                        .attr("width", cellW)
-                        .attr("height", cellH)
-                        .attr("x", function(d, i){
-                            return i * cellW
-                        })
-                        .attr("y", function(d, i){return pi * cellH + cellH})
-                        .attr("dx", cellW/2)
-                        .attr("dy", cellH/4*3)
-                        .style("fill","black")
-                        .style("text-anchor","middle")
-                        .text(function(d){return d;});
-            });
-            
-            row
-                .append("g")
-                .each(function(d, pi){
-                let cell = d3.select(this)
-                            .selectAll(".cell")
-                            .data(d);
-                    cell.enter().append("rect")
-                        .attr("class", "cell")
-                        .attr("width", cellW)
-                        .attr("height", cellH)
-                        .attr("x", function(d, i){
-                            return i * cellW
-                        })
-                        .attr("y", function(d, i){return pi * cellH + cellH})
-                        .attr("fill", "white")
-                        .attr("stroke","silver")
-                    cell.enter().append("text")
-                        .attr("class", "cell-content")
-                        .attr("width", cellW)
-                        .attr("height", cellH)
-                        .attr("x", function(d, i){
-                            return i * cellW
-                        })
-                        .attr("y", function(d, i){return pi * cellH + cellH})
-                        .attr("dx", cellW/2)
-                        .attr("dy", cellH/4*3)
-                        .style("fill","black")
-                        .style("text-anchor","middle")
-                        .text(function(d){return d;});
-            });
-            
-            
-        }
-        //line-chart
-        let line_width = 500 - margin.left - margin.right;
-        let line_height = 300 - margin.top - margin.bottom;
-
-        let svg_2 = body.append("svg")
-            .attr("width", line_width+ margin.left + margin.right)
-            .attr("height", line_height + margin.top + margin.bottom)
-          .append("g")
-            .attr("transform",translate(margin.left, margin.top));
-
-        let x = d3.scaleLinear().range([0, line_width]).domain([1982, 2017]);
-        let y = d3.scaleLinear().range([line_height, 0]);
-        let z = d3.scaleOrdinal(d3.schemeCategory10);
-
-        svg_2.append("g")
-            .attr("class", "x axis")
-            .attr("transform", translate(0,line_height))
-            .call(d3.axisBottom(x));
-        
-        svg_2.append("g")
-            .attr("class", "y axis")
-            .call(d3.axisLeft(y));
-
-        let	line= d3.line()
-            .x(function(d) { return x(d.year); })
-            .y(function(d) { return y(d.win_rate); });
-
-        let updateLines = function(data){
-            z.domain(data.map(function(d) {return d.team;}));
-
-            let selectValue_2 = d3.select('.select_2').property('value')
-            if (selectValue_2 =="DG"){y.domain([-15, 50])}
-            else {y.domain([0,1]);}
-            svg_2.select(".y.axis")
-                .call(d3.axisLeft(y));
-            
-            let line= d3.line()
-                .x(function(d) { return x(d.year); })
-                .y(function(d) { if(selectValue_2 == "DG") {return y(d.diff_game);} else{return y(d.win_rate);}})
-                .curve(d3.curveMonotoneX);
-
-            let baseball = svg_2.selectAll(".line")
-                        .data(data, d=>d.team)
-                        
-            baseball
-                .exit()
-                .remove();
-
-            let enter_line = baseball
-                .enter()
-                .append("path")
-                .attr("class", "line")
-                .attr("d", function(d) {return line(d.values);})
-                .style("stroke", function(d,i) {return z(d.team);})
-                .style("opacity", 0)
-                .attr("id", function(d){return d.team;});
-
-            baseball
-                .transition()
-                .duration(1000)
-                .attr("d", function(d) {return line(d.values);})
-                .style("stroke", function(d,i) {return z(d.team);});
-
-            enter_line.transition().duration(1000).delay(500).style("opacity", 1)
-
-            d3.selectAll("path")
-                .on("mouseover", function() {
-                    d3.selectAll("#"+this.id).style('stroke-width', 3)
-                })
-                .on("mouseout", function(){
-                    d3.selectAll("#"+this.id).style('stroke-width',1)
-                })
-            }
-            
-        
-        //bar-chart
         let bar_width= 500 - margin.left - margin.right;
         let bar_height = 300 - margin.top - margin.bottom;
 
-        let svg_3 = body.append("svg")
+        let svg = body.append("svg")
             .attr("width", bar_width + margin.left + margin.right)
             .attr("height", bar_height + margin.top + margin.bottom)
-          .append("g")
+            .append("g")
             .attr("transform",translate(margin.left, margin.top));
 
+        //bar-chart
         let x_2 = d3.scaleBand().range([0,bar_width])
         let y_2 = d3.scaleLinear().range([bar_height, 0])
 
@@ -384,9 +83,9 @@
             .attr("class", "y axis")
             .call(d3.axisLeft(y_2));
 
-        let updateBars = function(data, wdl){
+        let updateBars = function(data, category){
             
-            if (wdl==="W"){
+            if (category==="W"){
             x_2.domain(data.map(function(element) {return element.team}))
             y_2.domain([0, d3.max(data,function(element){return element.W})])
 
