@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+    .line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}    
+.hovered{
+    stroke-width:4px;
+
+}
+</style>
+</head>
+<body>
+</body>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script>
+    let margin = {top: 20, right: 20, bottom: 50, left: 40}
+
+    let body = d3.select("body");
+    
+    function translate(x,y) {
+    return "translate("+x+","+y+")";
+    }
+    function data_by_selected(data, selected){
+        let selected_data = data.filter(function(d) {return d.key === selected});
+        console.log(selected_data)
+        let counted = d3.nest()
+                        .key(function(d) {return d.selected;})
+                        .rollup(function(v) {return v.length;})
+                        .entries(selected_data);
+        // console.log(JSON.stringify(counted))
+        return counted
+    }
+    function get_bar_data(data){
+        let arr = [];
+        data.forEach(function(x){
+            let obj={};
+            obj.REPORT_NO = x.REPORT_NO
+            obj.SEX_CODE = x.SEX_CODE
+            obj.CONDITION_CODE = x.CONDITION_CODE
+            obj.DAMAGE_CODE = x.DAMAGE_CODE
+            //parsing 필요
+            obj.TIME = x.TIME
+            obj.AGE = x.AGE
+            arr.push(obj)
+        })
+        return arr
+    }    
+
+    d3.csv("./maryland_accident_dataset_preprocessed_v1.2.csv").then(function(data){
+        let total_bar_data = get_bar_data(data);
+        makevis(total_bar_data);
+        });
+
+
+    let makevis= function(total_bar_data){
+        //table
+        let bar_width= 500 - margin.left - margin.right;
+        let bar_height = 300 - margin.top - margin.bottom;
+
+        let svg_3 = body.append("svg")
+            .attr("width", bar_width + margin.left + margin.right)
+            .attr("height", bar_height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",translate(margin.left, margin.top));
+
+        //bar-chart
+        let x_2 = d3.scaleBand().range([0,bar_width])
+        let y_2 = d3.scaleLinear().range([bar_height, 0])
+
+        let color = d3.scaleOrdinal(d3.schemeCategory10);
+        
+        let xAxis = svg_3.append("g")
+            .attr("class", "x axis")
+            .attr("transform", translate(0, bar_height))
+            .call(d3.axisBottom(x_2));
+        
+        let yAxis = svg_3.append("g")
+            .attr("class", "y axis")
+            .call(d3.axisLeft(y_2));
+
+        let updateBars = function(data, category){
+            
+            if (category==="W"){
+            x_2.domain(data.map(function(element) {return element.team}))
+            y_2.domain([0, d3.max(data,function(element){return element.W})])
+
+            svg_3.select(".x.axis")
+                .call(d3.axisBottom(x_2));
+
+            svg_3.select(".y.axis")
+                .call(d3.axisLeft(y_2));
+
+            let bar = svg_3.selectAll(".bar").data(data, d=>d.team);
+            
+            bar
+                .exit()
+                .remove();
+
+            let enter_bar = bar
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("width", x_2.bandwidth())
+                .attr("height", d => bar_height - y_2(d.W))
+                .style("fill", (d,i)=>color(i))
+                .attr("transform", d => translate(x_2(d.team), y_2(d.W)))
+                .style("opacity", 0)
+                .attr("id", function(d) {return d.team;})
+
+            let update = bar
+                .transition()
+                .duration(1000)
+                .attr("width", x_2.bandwidth())
+                .attr("height", d => bar_height - y_2(d.W))
+                .style("fill", (d,i)=>color(i))
+                .attr("transform", d => translate(x_2(d.team), y_2(d.W)))
+
+            enter_bar.transition().duration(1000).delay(500).style("opacity", 1)
+            }
+            else if (wdl==="D"){
+            x_2.domain(data.map(function(element) {return element.team}))
+            y_2.domain([0, d3.max(data,function(element){return element.D})])
+
+            svg_3.select(".x.axis")
+                .call(d3.axisBottom(x_2));
+
+            svg_3.select(".y.axis")
+                .call(d3.axisLeft(y_2));
+
+            let bar = svg_3.selectAll(".bar").data(data, d=>d.team);
+            
+            bar
+                .exit()
+                .remove();
+
+            let enter_bar = bar
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("width", x_2.bandwidth())
+                .attr("height", d => bar_height - y_2(d.D))
+                .style("fill", (d,i)=>color(i))
+                .attr("transform", d => translate(x_2(d.team), y_2(d.D)))
+                .style("opacity", 0);
+
+            let update = bar
+                .transition()
+                .duration(1000)
+                .attr("width", x_2.bandwidth())
+                .attr("height", d => bar_height - y_2(d.D))
+                .style("fill", (d,i)=>color(i))
+                .attr("transform", d => translate(x_2(d.team), y_2(d.D)))
+
+            enter_bar.transition().duration(1000).delay(500).style("opacity", 1)
+
+            }
+
+            else if (wdl==="L"){
+            x_2.domain(data.map(function(element) {return element.team}))
+            y_2.domain([0, d3.max(data,function(element){return element.L})])
+
+            svg_3.select(".x.axis")
+                .call(d3.axisBottom(x_2));
+
+            svg_3.select(".y.axis")
+                .call(d3.axisLeft(y_2));
+
+            let bar = svg_3.selectAll(".bar").data(data, d=>d.team);
+            
+            bar
+                .exit()
+                .remove();
+
+            let enter_bar = bar
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("width", x_2.bandwidth())
+                .attr("height", d => bar_height - y_2(d.L))
+                .style("fill", (d,i)=>color(i))
+                .attr("transform", d => translate(x_2(d.team), y_2(d.L)))
+                .style("opacity", 0);
+
+            let update = bar
+                .transition()
+                .duration(1000)
+                .attr("width", x_2.bandwidth())
+                .attr("height", d => bar_height - y_2(d.L))
+                .style("fill", (d,i)=>color(i))
+                .attr("transform", d => translate(x_2(d.team), y_2(d.L)))
+
+            enter_bar.transition().duration(1000).delay(500).style("opacity", 1)
+
+            }
+
+            d3.selectAll("rect.bar")
+                .on("mouseover", function() {
+                    d3.select(this).style("fill", function(){
+                        return d3.rgb(d3.select(this).style("fill")).darker(0.9);
+                    })
+                })
+                .on("mouseout", function(){
+                    d3.select(this).style("fill", function(){
+                        return d3.rgb(d3.select(this).style("fill")).brighter(0.9);
+                    })
+                });
+        };
+        
+        //select-box
+        let select = body.append("div")
+            .append('select')
+            .attr('class','select')
+            .on('change', onchange)
+        
+        select
+            .selectAll("option")
+            .data(select_box_data)
+            .enter()
+            .append("option")
+            .text(function(d){return d;})
+
+        let select_2 = body.append("div")
+            .append('select')
+            .attr('class','select_2')
+            .on('change',onchange_2)
+        
+        select_2
+            .selectAll("option")
+            .data(select_box_data_win_diff)
+            .enter()
+            .append("option")
+            .text(function(d){return d;})
+        
+        let select_3 = body.append("div")
+            .append('select')
+            .attr('class','select_3')
+            .on('change',onchange_3)
+        
+        select_3
+            .selectAll("option")
+            .data(select_box_data_W_D_L)
+            .enter()
+            .append("option")
+            .text(function(d){return d;})
+
+
+        function onchange() {
+            let selectValue = d3.select(this).property('value');
+            let pop_bar_data= data_by_year_table_bar(total_bar_data, selectValue)
+            let pop_table_data = data_by_year_table_bar(total_table_data, selectValue)
+            let pop_line_data = data_by_year_line(total_line_data, selectValue)
+            let selectValue3 = d3.select('.select_3').property('value');
+            
+            updateTable(pop_table_data)
+            updateBars(pop_bar_data, selectValue3)
+            updateLines(pop_line_data)
+        };
+        
+        function onchange_2() {
+            let selectValue = d3.select('.select').property('value')
+            let pop_line_data = data_by_year_line(total_line_data, selectValue)
+            updateLines(pop_line_data)
+            
+        };
+        function onchange_3() {
+            let selectValue1 = d3.select('.select').property('value')
+            let selectValue3 = d3.select(this).property('value')
+            let pop_bar_data = data_by_year_table_bar(total_bar_data, selectValue1)
+            updateBars(pop_bar_data, selectValue3)
+            
+        };
+        let initial_for_table = data_by_year_table_bar(total_table_data, year)
+        let initial_for_bar= data_by_year_table_bar(total_bar_data, year)
+        let initial_for_line= data_by_year_line(total_line_data, year)
+        
+        updateTable(initial_for_table)
+        updateBars(initial_for_bar, "W")
+        updateLines(initial_for_line)
+    };
+    
+    </script>
+</html>
+        
