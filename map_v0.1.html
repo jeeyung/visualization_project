@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'/>
+    <title>MAP_v0.1</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet'/>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div id='map'></div>
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiamloeWVwYXJrIiwiYSI6ImNqZmtzazBpYjA5MWEzM25ndTEwank5ZTQifQ.G984GU_4hun02lWy7hMwkA';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v9',
+        zoom: 0
+    });
+
+    function get_map_data(data) {
+        let selected_data = {};
+        selected_data.type = "FeatureCollection";
+        feature_arr = [];
+
+        data.forEach(function (x) {
+            let obj = {};
+            obj.type = "Feature";
+
+            let obj_geo = {}
+            obj_geo.type = "Point";
+            obj_geo.coordinates = [parseFloat(x.LONGITUDE), parseFloat(x.LATITUDE)];
+            obj.geometry = obj_geo;
+
+            let obj_prop = {};
+            obj_prop.KEY_INDEX = x.KEY_INDEX;
+            obj_prop.SEX_CODE = x.SEX_CODE;
+            obj.properties = obj_prop;
+
+            feature_arr.push(obj)
+        });
+        selected_data.features = feature_arr;
+        return selected_data
+    }
+
+    map.on('load', function () {
+
+        d3.csv("./maryland_accident_dataset_preprocessed_v2.0.csv").then(function (data) {
+
+            let total_map_data = get_map_data(data);
+            console.log(total_map_data);
+
+            window.setInterval(function () {
+                map.getSource('drone').setData(total_map_data);
+            }, 2000);
+
+            map.addSource('drone', {type: 'geojson', data: total_map_data});
+            map.addLayer({
+                "id": "drone",
+                "type": "symbol",
+                "source": "drone",
+                "layout": {
+                    "icon-image": "rocket-15"
+                }
+            });
+
+        })
+
+
+    });
+</script>
+
+</body>
+</html>
+        
