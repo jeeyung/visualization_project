@@ -20,9 +20,8 @@
         }
 
         .button {
-            background-color: #4CAF50; /* Green */
             border: none;
-            color: white;
+            color: black;
             padding: 15px 32px;
             text-align: center;
             text-decoration: none;
@@ -32,21 +31,14 @@
             cursor: pointer;
         }
 
-        .button2 {
-            background-color: #008CBA;
-        }
-
-        .button3 {
-            background-color: #f44336;
-        }
-
-        .button4 {
-            background-color: #e7e7e7;
+        .button-small {
+            border: none;
             color: black;
-        }
-
-        .button5 {
-            background-color: #555555;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin: 4px 2px;
+            cursor: pointer;
         }
 
         #title {
@@ -55,7 +47,7 @@
             left: 1%;
             bottom: 0;
             width: 450px;
-            height: 200px;
+            height: 225px;
             box-sizing: border-box;
             border-color: rgba(65, 73, 80, 0.9);
             border-width: medium;
@@ -94,9 +86,9 @@
     <strong style="font-size: 20px;">Maryland</strong>
     <br>
     <br>
-    <input type="button" id="title-category-all" value="All">
+    <input type="button" id="title-category-all" class="button-small button-category" value="All">
     <div id="title-button-category"></div>
-    <br> Traffic Accident Counts in 2015 January, February, March
+    <br> Traffic Accident Counts of Maryland in 2015 January, February, March
     <br>
     <strong style="color: black; background-color:#d6d539">~ 99</strong> | <strong
         style="color: black; background-color:#f187d4">100 ~ 299</strong> | <strong
@@ -188,40 +180,52 @@
             /* cluster button options */
             let btn_4 = button_cluster
                 .append('button')
-                .attr('class', 'button')
+                .attr('class', 'button button-cluster')
                 .text('빗길 사고')
                 .attr('value', '4')
+                .attr('id', 'cluster4')
                 .on("click", onchange_cluster);
 
             let btn_0 = button_cluster
                 .append('button')
-                .attr('class', 'button button2')
+                .attr('class', 'button button-cluster')
                 .text('눈길 사고')
                 .attr('value', '0')
+                .attr('id', 'cluster0')
                 .on("click", onchange_cluster);
 
             let btn_3 = button_cluster
                 .append('button')
-                .attr('class', 'button button3')
+                .attr('class', 'button button-cluster')
                 .text('우회전 차선 사고')
                 .attr('value', '3')
+                .attr('id', 'cluster3')
                 .on("click", onchange_cluster);
 
             let btn_1 = button_cluster
                 .append('button')
-                .attr('class', 'button button5')
+                .attr('class', 'button button-cluster')
                 .text('좌회전 차선 사고')
                 .attr('value', '1')
+                .attr('id', 'cluster1')
                 .on("click", onchange_cluster);
 
             let btn_2 = button_cluster
                 .append('button')
-                .attr('class', 'button button4')
+                .attr('class', 'button button-cluster')
                 .text('기타')
                 .attr('value', '2')
+                .attr('id', 'cluster2')
                 .on("click", onchange_cluster);
 
             function onchange_cluster() {
+                let buttons = document.getElementsByClassName('button-cluster')
+                for (var i = 0; i < buttons.length; i++) {
+                    item = buttons[i]
+                    item.style.backgroundColor = '';
+                }
+                document.getElementById(d3.select(this).property('id')).style.backgroundColor = '#4CAF50';
+
                 let selected_cluster = d3.select(this).property('value');
 
                 /* REMOVE previous layers */
@@ -255,10 +259,12 @@
                     title_button_category.append('button')
                         .text('Male')
                         .attr('value', 'SEX_CODE-M')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('Female')
                         .attr('value', 'SEX_CODE-F')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
 
 
@@ -266,113 +272,146 @@
                     let cate_1 = title_button_category.append('button')
                         .text('~9세 이하')
                         .attr('value', 'AGE-~9')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('10대')
                         .attr('value', 'AGE-10~19')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('20대')
                         .attr('value', 'AGE-20~29')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('30대')
                         .attr('value', 'AGE-30~39')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('40대')
                         .attr('value', 'AGE-40~49')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('50대')
                         .attr('value', 'AGE-50~59')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('60대')
                         .attr('value', 'AGE-60~69')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('70대')
                         .attr('value', 'AGE-70~79')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('80세 이상')
                         .attr('value', 'AGE-80~')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
 
                 } else if (selected_variable === 'DAMAGE_CODE') {
                     title_button_category.append('button')
                         .text('Destroyed')
                         .attr('value', 'DAMAGE_CODE-Destroyed')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('Disabling')
                         .attr('value', 'DAMAGE_CODE-Disabling')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('Functional')
                         .attr('value', 'DAMAGE_CODE-Functional')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('No damage')
                         .attr('value', 'DAMAGE_CODE-No damage')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('Superficial')
                         .attr('value', 'DAMAGE_CODE-Superficial')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
 
                 } else if (selected_variable === 'INJ_SEVER_CODE') {
                     title_button_category.append('button')
                         .text('No Injury')
                         .attr('value', 'INJ_SEVER_CODE-No Injury')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('Possible Incapacitating Injury')
                         .attr('value', 'INJ_SEVER_CODE-Possible Incapacitating Injury')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('Non-incapacitating Injury')
                         .attr('value', 'INJ_SEVER_CODE-Non-incapacitating Injury')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('Incapacitating/Disabled Injury')
                         .attr('value', 'INJ_SEVER_CODE-Incapacitating/Disabled Injury')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('Fatal Injury')
                         .attr('value', 'INJ_SEVER_CODE-Fatal Injury')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
 
                 } else if (selected_variable === 'TIME') {
                     title_button_category.append('button')
                         .text('자정-새벽6시')
                         .attr('value', 'TIME-00~06')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('새벽6시-낮12시')
                         .attr('value', 'TIME-06~12')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('낮12시-오후6시')
                         .attr('value', 'TIME-12~18')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('오후6시-자정')
                         .attr('value', 'TIME-18~24')
+                        .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                 }
             }
 
             /* category button */
             document.getElementById("title-category-all").onclick = function () {
-                
+                onchange_category_all(d3.select(this).property('id'));
+            };
+
+            function onchange_category_all(clicked_id) {
+                let buttons = document.getElementsByClassName('button-category')
+                for (var i = 0; i < buttons.length; i++) {
+                    item = buttons[i]
+                    item.style.backgroundColor = '';
+                }
+                document.getElementById(clicked_id).style.backgroundColor = '#4CAF50';
+
                 /* REMOVE previous layers */
                 map.removeLayer('clusters-' + current_cluster);
                 map.removeLayer('cluster-count-' + current_cluster);
 
                 makevis_map(total_map_data, current_cluster);
-            };
+            }
 
             function onchange_category() {
                 let selected_value = d3.select(this).property('value');
