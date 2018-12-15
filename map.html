@@ -219,6 +219,8 @@
             makevis_map(total_map_data, selected_cluster, selected_category);
 
             function onchange_cluster() {
+                onchange_category_all('title-category-all');
+
                 let buttons = document.getElementsByClassName('button-cluster')
                 for (var i = 0; i < buttons.length; i++) {
                     item = buttons[i];
