@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset='utf-8'/>
-    <title>v0.6_MAPing</title>
+    <title>v0.7_MAPing</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet'/>
@@ -49,6 +49,29 @@
             background-color: #555555;
         }
 
+        #title {
+            position: absolute;
+            top: 72%;
+            left: 1%;
+            bottom: 0;
+            width: 450px;
+            height: 160px;
+            box-sizing: border-box;
+            border-color: rgba(65, 73, 80, 0.9);
+            border-width: medium;
+            border-style: solid;
+            padding: 8px 24px;
+            font-family: 'Ropa Sans', sans-serif;
+            font-size: 9pt;
+            color: rgba(229, 229, 216, 0.9);
+            text-align: center;
+            background: rgba(42, 54, 60, 0.9);
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+            z-index: 9999;
+            overflow: auto;
+        }
+
         /* Black */
     </style>
 </head>
@@ -56,6 +79,19 @@
 
 <div id="button_cluster"></div>
 <div id='map'></div>
+<div id="title">
+    <strong style="font-size: 20px;">Traffic Accident Counts</strong>
+    of
+    <strong style="font-size: 20px;">Maryland</strong>
+    <br>
+    <br>
+    <input type="button" value="all" checked="checked">
+    <input type="button" value="male">
+    <input type="button" value="female">
+    <br> Traffic Accident Counts in 2015 January, February, March
+    <br>
+    <strong style="color:#d6d539">~ 99</strong> | <strong style="color:#f187d4">100 ~ 299</strong> | <strong style="color:#f20510">300 ~</strong>
+</div>
 
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script>
