@@ -12,21 +12,28 @@
             padding: 0;
         }
 
+        .options {
+            position: relative;
+            height: 10%;
+            font-size: 10px;
+        }
+
         #map {
             position: absolute;
             top: 10%;
             bottom: 0;
+            height: 80%;
             width: 50%;
         }
 
         .button {
             border: none;
             color: black;
-            padding: 15px 32px;
+            /*padding: 15px 32px;*/
             text-align: center;
             text-decoration: none;
             display: inline-block;
-            font-size: 16px;
+            /*font-size: 16px;*/
             margin: 4px 2px;
             cursor: pointer;
         }
@@ -42,19 +49,19 @@
         }
 
         #title {
-            position: absolute;
-            top: 72%;
-            left: 1%;
+            position: relative;
+            top: 370px;
+            left: 0%;
             bottom: 0;
             width: 450px;
-            height: 225px;
+            height: 100px;
             box-sizing: border-box;
             border-color: rgba(65, 73, 80, 0.9);
             border-width: medium;
             border-style: solid;
-            padding: 8px 24px;
+            /*padding: 8px 24px;*/
             font-family: 'Ropa Sans', sans-serif;
-            font-size: 9pt;
+            font-size: 7pt;
             color: rgba(229, 229, 216, 0.9);
             text-align: center;
             background: rgba(42, 54, 60, 0.9);
@@ -69,8 +76,8 @@
 </head>
 <body>
 
-<div id="button_cluster"></div>
-<div id="button_variable">
+<div id="button_cluster" class="options"></div>
+<div id="button_variable" class="options">
     <form>
         <input type='radio' name="button_variable" id="SEX_CODE" checked>성별</input>
         <input type='radio' name="button_variable" id="AGE">연령대</input>
@@ -81,11 +88,6 @@
 </div>
 <div id='map'></div>
 <div id="title">
-    <strong style="font-size: 20px;">Traffic Accident Counts</strong>
-    of
-    <strong style="font-size: 20px;">Maryland</strong>
-    <br>
-    <br>
     <input type="button" id="title-category-all" class="button-small button-category" value="All">
     <div id="title-button-category"></div>
     <br> Traffic Accident Counts of Maryland in 2015 January, February, March
@@ -107,7 +109,7 @@
         container: 'map',
         style: 'mapbox://styles/jihyepark/cjpmatebe1p3y2sqrwmfsnpw5',
         center: [-77.0944788, 38.8748153],
-        zoom: 7.7
+        zoom: 6.5
     });
 
     function handle_map_data(feature_arr, x) {
@@ -144,6 +146,14 @@
                         feature_arr = handle_map_data(feature_arr, x);
                     } else if (selected_variable === 'INJ_SEVER_CODE' && selected_category === x.INJ_SEVER_CODE) {
                         feature_arr = handle_map_data(feature_arr, x);
+                    } else if (selected_variable === 'AGE') {
+                        let age_category = parseInt(parseFloat(x.AGE) / 10)
+                        if (age_category >= 8) {
+                            age_category = 8
+                        }
+                        if (selected_category === age_category.toString()) {
+                            feature_arr = handle_map_data(feature_arr, x);
+                        }
                     }
                 }
             }
@@ -278,47 +288,47 @@
                 } else if (selected_variable === 'AGE') {
                     let cate_1 = title_button_category.append('button')
                         .text('~9세 이하')
-                        .attr('value', 'AGE-~9')
+                        .attr('value', 'AGE-0')
                         .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('10대')
-                        .attr('value', 'AGE-10~19')
+                        .attr('value', 'AGE-1')
                         .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('20대')
-                        .attr('value', 'AGE-20~29')
+                        .attr('value', 'AGE-2')
                         .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('30대')
-                        .attr('value', 'AGE-30~39')
+                        .attr('value', 'AGE-3')
                         .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('40대')
-                        .attr('value', 'AGE-40~49')
+                        .attr('value', 'AGE-4')
                         .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('50대')
-                        .attr('value', 'AGE-50~59')
+                        .attr('value', 'AGE-5')
                         .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('60대')
-                        .attr('value', 'AGE-60~69')
+                        .attr('value', 'AGE-6')
                         .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('70대')
-                        .attr('value', 'AGE-70~79')
+                        .attr('value', 'AGE-7')
                         .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('80세 이상')
-                        .attr('value', 'AGE-80~')
+                        .attr('value', 'AGE-8')
                         .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
 
