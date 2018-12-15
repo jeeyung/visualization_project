@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset='utf-8'/>
-    <title>v0.8_MAPing</title>
+    <title>v0.9_MAPing</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet'/>
@@ -55,7 +55,7 @@
             left: 1%;
             bottom: 0;
             width: 450px;
-            height: 160px;
+            height: 200px;
             box-sizing: border-box;
             border-color: rgba(65, 73, 80, 0.9);
             border-width: medium;
@@ -80,11 +80,11 @@
 <div id="button_cluster"></div>
 <div id="button_variable">
     <form>
-        <input type='radio' name="button_variable" id="var-SEX_CODE">성별</input>
-        <input type='radio' name="button_variable" id="var-AGE">연령대</input>
-        <input type='radio' name="button_variable" id="var-DAMAGE_CODE">과실자 상태</input>
-        <input type='radio' name="button_variable" id="var-INJ_SEVER_CODE">부상 정도</input>
-        <input type='radio' name="button_variable" id="var-TIME">시간대</input>
+        <input type='radio' name="button_variable" id="SEX_CODE">성별</input>
+        <input type='radio' name="button_variable" id="AGE">연령대</input>
+        <input type='radio' name="button_variable" id="DAMAGE_CODE">과실자 상태</input>
+        <input type='radio' name="button_variable" id="INJ_SEVER_CODE">부상 정도</input>
+        <input type='radio' name="button_variable" id="TIME">시간대</input>
     </form>
 </div>
 <div id='map'></div>
@@ -94,9 +94,8 @@
     <strong style="font-size: 20px;">Maryland</strong>
     <br>
     <br>
-    <input type="button" value="all" checked="checked">
-    <input type="button" value="male">
-    <input type="button" value="female">
+    <input type="button" id="title-button-all" value="All">
+    <div id="title-button-category"></div>
     <br> Traffic Accident Counts in 2015 January, February, March
     <br>
     <strong style="color: black; background-color:#d6d539">~ 99</strong> | <strong
@@ -206,24 +205,42 @@
             }
 
             /* variable button options */
-            document.getElementById("var-SEX_CODE").onchange = function () {
-                onchange_variable()
+            document.getElementById("SEX_CODE").onchange = function () {
+                onchange_variable('SEX_CODE')
             };
-            document.getElementById("var-AGE").onchange = function () {
-                onchange_variable()
+            document.getElementById("AGE").onchange = function () {
+                onchange_variable('AGE')
             };
-            document.getElementById("var-DAMAGE_CODE").onchange = function () {
-                onchange_variable()
+            document.getElementById("DAMAGE_CODE").onchange = function () {
+                onchange_variable('DAMAGE_CODE')
             };
-            document.getElementById("var-INJ_SEVER_CODE").onchange = function () {
-                onchange_variable()
+            document.getElementById("INJ_SEVER_CODE").onchange = function () {
+                onchange_variable('INJ_SEVER_CODE')
             };
-            document.getElementById("var-TIME").onchange = function () {
-                onchange_variable()
+            document.getElementById("TIME").onchange = function () {
+                onchange_variable('TIME')
             };
 
-            function onchange_variable() {
-                alert(1)
+            function onchange_variable(selected_variable) {
+                if (selected_variable === 'SEX_CODE') {
+                    document.getElementById('title-button-category').innerHTML = "<input type=\'button\' value=\'Male\'><input type=\'button\' value=\'Female\'>";
+
+                } else if (selected_variable === 'AGE') {
+                    document.getElementById('title-button-category').innerHTML = "<input type=\'button\' value=\'~9세 이하\'><input type=\'button\' value=\'10대\'><input type='button' value='20대'><input type='button' value='30대'><input type='button' value='40대'><input type='button' value='50대'><input type='button' value='60대'><input type='button' value='70대'><input type='button' value='80대 이상'>";
+
+                } else if (selected_variable === 'DAMAGE_CODE') {
+                    document.getElementById('title-button-category').innerHTML = "<input type=\'button\' value=\'Destroyed\'><input type=\'button\' value=\'Disabling\'><input type='button' value='Functional'><input type='button' value='No damage'><input type='button' value='Superficial'>";
+
+                }else if (selected_variable === 'INJ_SEVER_CODE') {
+                    document.getElementById('title-button-category').innerHTML = "<input type='button' value='No Injury'><input type='button' value='Possible Incapacitating Injury'><input type='button' value='Non-incapacitating Injury'><input type='button' value='Incapacitating/Disabled Injury'><input type='button' value='Fatal Injury'>";
+
+                }else if(selected_variable === 'TIME') {
+                    document.getElementById('title-button-category').innerHTML = "<input type='button' value='00:00-05:59'><input type='button' value='06:00-11:59'><input type='button' value='12:00-17:59'><input type='button' value='18:00-23:59'>";
+                }
+
+
+                // let partial_map_data = get_map_data_partial(total_map_data, selected_variable);
+                // console.log(partial_map_data)
             }
 
 
