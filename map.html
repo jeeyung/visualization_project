@@ -126,36 +126,23 @@
         return feature_arr
     }
 
-    function get_map_data(data, selected_cluster) {
+    function get_map_data(data, selected_cluster, selected_variable, selected_category) {
         let selected_data = {};
         selected_data.type = "FeatureCollection";
         feature_arr = [];
 
         data.forEach(function (x) {
             if (selected_cluster === x.CLUSTER) {
-                feature_arr = handle_map_data(feature_arr, x);
-            }
-        });
-        selected_data.features = feature_arr;
-
-        console.log(selected_data);
-        return selected_data
-    }
-
-    function get_map_data_partial(data, selected_cluster, selected_variable, selected_category) {
-        let selected_data = {};
-        selected_data.type = "FeatureCollection";
-        feature_arr = [];
-
-        data.forEach(function (x) {
-            if (selected_cluster === x.CLUSTER) {
-
-                if (selected_variable === 'SEX_CODE' && selected_category === x.SEX_CODE) {
+                if (selected_variable == null) {
                     feature_arr = handle_map_data(feature_arr, x);
-                } else if (selected_variable === 'DAMAGE_CODE' && selected_category === x.DAMAGE_CODE) {
-                    feature_arr = handle_map_data(feature_arr, x);
-                } else if (selected_variable === 'INJ_SEVER_CODE' && selected_category === x.INJ_SEVER_CODE) {
-                    feature_arr = handle_map_data(feature_arr, x);
+                } else {
+                    if (selected_variable === 'SEX_CODE' && selected_category === x.SEX_CODE) {
+                        feature_arr = handle_map_data(feature_arr, x);
+                    } else if (selected_variable === 'DAMAGE_CODE' && selected_category === x.DAMAGE_CODE) {
+                        feature_arr = handle_map_data(feature_arr, x);
+                    } else if (selected_variable === 'INJ_SEVER_CODE' && selected_category === x.INJ_SEVER_CODE) {
+                        feature_arr = handle_map_data(feature_arr, x);
+                    }
                 }
             }
         });
@@ -228,13 +215,13 @@
                 .attr('value', 'SEX_CODE-F')
                 .attr('class', 'button-small button-category')
                 .on("click", onchange_category);
-            let total_map_data = get_map_data(data, selected_cluster);
+            let total_map_data = get_map_data(data, selected_cluster, null, null);
             makevis_map(total_map_data, selected_cluster, selected_category);
 
             function onchange_cluster() {
                 let buttons = document.getElementsByClassName('button-cluster')
                 for (var i = 0; i < buttons.length; i++) {
-                    item = buttons[i]
+                    item = buttons[i];
                     item.style.backgroundColor = '';
                 }
                 document.getElementById(d3.select(this).property('id')).style.backgroundColor = '#4CAF50';
@@ -245,7 +232,7 @@
                 map.removeLayer('clusters-' + current_cluster + '-' + current_category);
                 map.removeLayer('cluster-count-' + current_cluster + '-' + current_category);
 
-                total_map_data = get_map_data(data, selected_cluster);
+                total_map_data = get_map_data(data, selected_cluster, null, null);
                 makevis_map(total_map_data, selected_cluster, current_category);
             }
 
@@ -446,7 +433,7 @@
                 map.removeLayer('clusters-' + current_cluster + '-' + current_category);
                 map.removeLayer('cluster-count-' + current_cluster + '-' + current_category);
 
-                let partial_map_data = get_map_data_partial(data, current_cluster, selected_variable, selected_category)
+                let partial_map_data = get_map_data(data, current_cluster, selected_variable, selected_category)
                 makevis_map(partial_map_data, current_cluster, selected_category);
             }
 
