@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset='utf-8'/>
-    <title>v0.9_MAPing</title>
+    <title>v1.0_MAPing</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet'/>
@@ -106,7 +106,7 @@
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script>
     let button_cluster = d3.select("#button_cluster");
-    let button_variable = d3.select("#button_variable");
+    let title_button_category = d3.select("#title-button-category");
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiamloeWVwYXJrIiwiYSI6ImNqZmtzazBpYjA5MWEzM25ndTEwank5ZTQifQ.G984GU_4hun02lWy7hMwkA';
     let map = new mapboxgl.Map({
@@ -116,6 +116,24 @@
         zoom: 7.7
     });
 
+    function handle_map_data(feature_arr, x) {
+        let obj = {};
+        obj.type = "Feature";
+
+        let obj_geo = {}
+        obj_geo.type = "Point";
+        obj_geo.coordinates = [parseFloat(x.LONGITUDE), parseFloat(x.LATITUDE)];
+        obj.geometry = obj_geo;
+
+        let obj_prop = {};
+        obj_prop.KEY_INDEX = x.KEY_INDEX;
+        obj_prop.SEX_CODE = x.SEX_CODE;
+        obj.properties = obj_prop;
+
+        feature_arr.push(obj)
+        return feature_arr
+    }
+
     function get_map_data(data, selected_cluster) {
         let selected_data = {};
         selected_data.type = "FeatureCollection";
@@ -123,20 +141,30 @@
 
         data.forEach(function (x) {
             if (selected_cluster === x.CLUSTER) {
-                let obj = {};
-                obj.type = "Feature";
+                feature_arr = handle_map_data(feature_arr, x);
+            }
+        });
+        selected_data.features = feature_arr;
 
-                let obj_geo = {}
-                obj_geo.type = "Point";
-                obj_geo.coordinates = [parseFloat(x.LONGITUDE), parseFloat(x.LATITUDE)];
-                obj.geometry = obj_geo;
+        console.log(selected_data);
+        return selected_data
+    }
 
-                let obj_prop = {};
-                obj_prop.KEY_INDEX = x.KEY_INDEX;
-                obj_prop.SEX_CODE = x.SEX_CODE;
-                obj.properties = obj_prop;
+    function get_map_data_partial(data, selected_cluster, selected_variable, selected_category) {
+        let selected_data = {};
+        selected_data.type = "FeatureCollection";
+        feature_arr = [];
 
-                feature_arr.push(obj)
+        data.forEach(function (x) {
+            if (selected_cluster === x.CLUSTER) {
+
+                if (selected_variable === 'SEX_CODE' && selected_category === x.SEX_CODE) {
+                    feature_arr = handle_map_data(feature_arr, x);
+                } else if (selected_variable === 'DAMAGE_CODE' && selected_category === x.DAMAGE_CODE) {
+                    feature_arr = handle_map_data(feature_arr, x);
+                } else if (selected_variable === 'INJ_SEVER_CODE' && selected_category === x.INJ_SEVER_CODE) {
+                    feature_arr = handle_map_data(feature_arr, x);
+                }
             }
         });
         selected_data.features = feature_arr;
@@ -196,7 +224,7 @@
             function onchange_cluster() {
                 let selected_cluster = d3.select(this).property('value');
 
-                /* hide previous layers */
+                /* REMOVE previous layers */
                 map.removeLayer('clusters-' + current_cluster);
                 map.removeLayer('cluster-count-' + current_cluster);
 
@@ -222,27 +250,128 @@
             };
 
             function onchange_variable(selected_variable) {
+                title_button_category.selectAll("*").remove();
                 if (selected_variable === 'SEX_CODE') {
-                    document.getElementById('title-button-category').innerHTML = "<input type=\'button\' value=\'Male\'><input type=\'button\' value=\'Female\'>";
+                    title_button_category.append('button')
+                        .text('Male')
+                        .attr('value', 'SEX_CODE-M')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('Female')
+                        .attr('value', 'SEX_CODE-F')
+                        .on("click", onchange_category);
+
 
                 } else if (selected_variable === 'AGE') {
-                    document.getElementById('title-button-category').innerHTML = "<input type=\'button\' value=\'~9세 이하\'><input type=\'button\' value=\'10대\'><input type='button' value='20대'><input type='button' value='30대'><input type='button' value='40대'><input type='button' value='50대'><input type='button' value='60대'><input type='button' value='70대'><input type='button' value='80대 이상'>";
+                    let cate_1 = title_button_category.append('button')
+                        .text('~9세 이하')
+                        .attr('value', 'AGE-~9')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('10대')
+                        .attr('value', 'AGE-10~19')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('20대')
+                        .attr('value', 'AGE-20~29')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('30대')
+                        .attr('value', 'AGE-30~39')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('40대')
+                        .attr('value', 'AGE-40~49')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('50대')
+                        .attr('value', 'AGE-50~59')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('60대')
+                        .attr('value', 'AGE-60~69')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('70대')
+                        .attr('value', 'AGE-70~79')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('80세 이상')
+                        .attr('value', 'AGE-80~')
+                        .on("click", onchange_category);
 
                 } else if (selected_variable === 'DAMAGE_CODE') {
-                    document.getElementById('title-button-category').innerHTML = "<input type=\'button\' value=\'Destroyed\'><input type=\'button\' value=\'Disabling\'><input type='button' value='Functional'><input type='button' value='No damage'><input type='button' value='Superficial'>";
+                    title_button_category.append('button')
+                        .text('Destroyed')
+                        .attr('value', 'DAMAGE_CODE-Destroyed')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('Disabling')
+                        .attr('value', 'DAMAGE_CODE-Disabling')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('Functional')
+                        .attr('value', 'DAMAGE_CODE-Functional')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('No damage')
+                        .attr('value', 'DAMAGE_CODE-No damage')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('Superficial')
+                        .attr('value', 'DAMAGE_CODE-Superficial')
+                        .on("click", onchange_category);
 
-                }else if (selected_variable === 'INJ_SEVER_CODE') {
-                    document.getElementById('title-button-category').innerHTML = "<input type='button' value='No Injury'><input type='button' value='Possible Incapacitating Injury'><input type='button' value='Non-incapacitating Injury'><input type='button' value='Incapacitating/Disabled Injury'><input type='button' value='Fatal Injury'>";
+                } else if (selected_variable === 'INJ_SEVER_CODE') {
+                    title_button_category.append('button')
+                        .text('No Injury')
+                        .attr('value', 'INJ_SEVER_CODE-No Injury')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('Possible Incapacitating Injury')
+                        .attr('value', 'INJ_SEVER_CODE-Possible Incapacitating Injury')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('Non-incapacitating Injury')
+                        .attr('value', 'INJ_SEVER_CODE-Non-incapacitating Injury')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('Incapacitating/Disabled Injury')
+                        .attr('value', 'INJ_SEVER_CODE-Incapacitating/Disabled Injury')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('Fatal Injury')
+                        .attr('value', 'INJ_SEVER_CODE-Fatal Injury')
+                        .on("click", onchange_category);
 
-                }else if(selected_variable === 'TIME') {
-                    document.getElementById('title-button-category').innerHTML = "<input type='button' value='00:00-05:59'><input type='button' value='06:00-11:59'><input type='button' value='12:00-17:59'><input type='button' value='18:00-23:59'>";
+                } else if (selected_variable === 'TIME') {
+                    title_button_category.append('button')
+                        .text('자정-새벽6시')
+                        .attr('value', 'TIME-00~06')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('새벽6시-낮12시')
+                        .attr('value', 'TIME-06~12')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('낮12시-오후6시')
+                        .attr('value', 'TIME-12~18')
+                        .on("click", onchange_category);
+                    title_button_category.append('button')
+                        .text('오후6시-자정')
+                        .attr('value', 'TIME-18~24')
+                        .on("click", onchange_category);
                 }
-
-
-                // let partial_map_data = get_map_data_partial(total_map_data, selected_variable);
-                // console.log(partial_map_data)
             }
 
+            function onchange_category() {
+                let selected_value = d3.select(this).property('value');
+                let values = selected_value.split('-');
+
+                let selected_variable = values[0];
+                let selected_category = values[1];
+                let partial_map_data = get_map_data_partial(data, current_cluster, selected_variable, selected_category)
+            }
 
         });
 
