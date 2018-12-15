@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset='utf-8'/>
-    <title>v0.7_MAPing</title>
+    <title>v0.8_MAPing</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet'/>
@@ -78,6 +78,15 @@
 <body>
 
 <div id="button_cluster"></div>
+<div id="button_variable">
+    <form>
+        <input type='radio' name="button_variable" id="var-SEX_CODE">성별</input>
+        <input type='radio' name="button_variable" id="var-AGE">연령대</input>
+        <input type='radio' name="button_variable" id="var-DAMAGE_CODE">과실자 상태</input>
+        <input type='radio' name="button_variable" id="var-INJ_SEVER_CODE">부상 정도</input>
+        <input type='radio' name="button_variable" id="var-TIME">시간대</input>
+    </form>
+</div>
 <div id='map'></div>
 <div id="title">
     <strong style="font-size: 20px;">Traffic Accident Counts</strong>
@@ -90,12 +99,15 @@
     <input type="button" value="female">
     <br> Traffic Accident Counts in 2015 January, February, March
     <br>
-    <strong style="color: black; background-color:#d6d539">~ 99</strong> | <strong style="color: black; background-color:#f187d4">100 ~ 299</strong> | <strong style="color: black; background-color:#f20510">300 ~</strong>
+    <strong style="color: black; background-color:#d6d539">~ 99</strong> | <strong
+        style="color: black; background-color:#f187d4">100 ~ 299</strong> | <strong
+        style="color: black; background-color:#f20510">300 ~</strong>
 </div>
 
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script>
     let button_cluster = d3.select("#button_cluster");
+    let button_variable = d3.select("#button_variable");
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiamloeWVwYXJrIiwiYSI6ImNqZmtzazBpYjA5MWEzM25ndTEwank5ZTQifQ.G984GU_4hun02lWy7hMwkA';
     let map = new mapboxgl.Map({
@@ -192,6 +204,28 @@
                 total_map_data = get_map_data(data, selected_cluster);
                 makevis_map(total_map_data, selected_cluster);
             }
+
+            /* variable button options */
+            document.getElementById("var-SEX_CODE").onchange = function () {
+                onchange_variable()
+            };
+            document.getElementById("var-AGE").onchange = function () {
+                onchange_variable()
+            };
+            document.getElementById("var-DAMAGE_CODE").onchange = function () {
+                onchange_variable()
+            };
+            document.getElementById("var-INJ_SEVER_CODE").onchange = function () {
+                onchange_variable()
+            };
+            document.getElementById("var-TIME").onchange = function () {
+                onchange_variable()
+            };
+
+            function onchange_variable() {
+                alert(1)
+            }
+
 
         });
 
