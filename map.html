@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset='utf-8'/>
-    <title>v1.0_MAPing</title>
+    <title>v1.1_MAPing</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet'/>
@@ -90,9 +90,11 @@
     <div id="title-button-category"></div>
     <br> Traffic Accident Counts of Maryland in 2015 January, February, March
     <br>
-    <strong style="color: black; background-color:#d6d539">~ 99</strong> | <strong
-        style="color: black; background-color:#f187d4">100 ~ 299</strong> | <strong
-        style="color: black; background-color:#f20510">300 ~</strong>
+    <strong style="color: black; background-color:#ffffff">~ 10</strong> | <strong
+        style="color: black; background-color:#ffb3b3">11 ~ 50</strong> | <strong
+        style="color: black; background-color:#ff6666">51 ~ 100</strong> | <strong
+        style="color: black; background-color:#ff1a1a">101 ~ 300</strong> | <strong
+        style="color: black; background-color:#800000">301 ~</strong>
 </div>
 
 <script src="https://d3js.org/d3.v5.min.js"></script>
@@ -460,11 +462,15 @@
                     "circle-color": [
                         "step",
                         ["get", "point_count"],
-                        "#d6d539",
+                        "#ffffff",
+                        10,
+                        "#ffb3b3",
+                        50,
+                        "#ff6666",
                         100,
-                        "#f187d4",
+                        "#ff1a1a",
                         300,
-                        "#f20510"
+                        "#800000"
                     ],
                     "circle-radius": [
                         "step",
@@ -490,25 +496,25 @@
                 }
             });
 
-            // /*inspect a cluster on click*/
-            // map.on('click', 'clusters', function (e) {
-            //     var features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
-            //     var clusterId = features[0].properties.cluster_id;
-            //     map.getSource(timestamp_str).getClusterExpansionZoom(clusterId, function (err, zoom) {
-            //         if (err)
-            //             return;
-            //
-            //         map.easeTo({
-            //             center: features[0].geometry.coordinates,
-            //             zoom: zoom
-            //         });
-            //     });
-            // });
+            /*inspect a cluster on click*/
+            map.on('click', 'clusters-' + selected_cluster + '-' + selected_category, function (e) {
+                var features = map.queryRenderedFeatures(e.point, {layers: ['clusters-' + selected_cluster + '-' + selected_category]});
+                var clusterId = features[0].properties.cluster_id;
+                map.getSource(timestamp_str).getClusterExpansionZoom(clusterId, function (err, zoom) {
+                    if (err)
+                        return;
 
-            map.on('mouseenter', 'clusters', function () {
+                    map.easeTo({
+                        center: features[0].geometry.coordinates,
+                        zoom: zoom
+                    });
+                });
+            });
+
+            map.on('mouseenter', 'clusters-' + selected_cluster + '-' + selected_category, function () {
                 map.getCanvas().style.cursor = 'pointer';
             });
-            map.on('mouseleave', 'clusters', function () {
+            map.on('mouseleave', 'clusters-' + selected_cluster + '-' + selected_category, function () {
                 map.getCanvas().style.cursor = '';
             });
 
