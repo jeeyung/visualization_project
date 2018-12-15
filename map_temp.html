@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset='utf-8'/>
-    <title>v0.6_MAPing</title>
+    <title>v0.5_MAP</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet'/>
@@ -93,8 +93,6 @@
             }
         });
         selected_data.features = feature_arr;
-
-        console.log(selected_data);
         return selected_data
     }
 
@@ -102,15 +100,101 @@
 
         d3.csv("./maryland_accident_dataset_preprocessed_v3.0.csv").then(function (data) {
 
-            current_cluster = null;
+            /* test */
+            selected_cluster = '0';
 
-            /* Initial display */
-            selected_cluster = '4';
             let total_map_data = get_map_data(data, selected_cluster);
-            makevis_map(total_map_data, selected_cluster);
+            console.log(total_map_data);
+            makevis_map(total_map_data);
 
+        });
 
-            /* cluster button options */
+        let makevis_map = function (total_map_data) {
+            map.addSource('sourcedata', {
+                type: 'geojson', data: total_map_data,
+                cluster: true,
+                clusterMaxZoom: 14, // Max zoom to cluster points on
+                clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+            });
+            map.addLayer({
+                id: "clusters",
+                type: "circle",
+                source: "sourcedata",
+                filter: ["has", "point_count"],
+                paint: {
+                    // Use step expressions (https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+                    // with three steps to implement three types of circles:
+                    //   * color1, 20px circles when point count is less than 100
+                    //   * color2, 30px circles when point count is between 100 and 750
+                    //   * color3, 40px circles when point count is greater than or equal to 750
+                    "circle-color": [
+                        "step",
+                        ["get", "point_count"],
+                        "#d6d539",
+                        100,
+                        "#f187d4",
+                        300,
+                        "#f20510"
+                    ],
+                    "circle-radius": [
+                        "step",
+                        ["get", "point_count"],
+                        20,
+                        100,
+                        30,
+                        750,
+                        40
+                    ]
+                }
+            });
+
+            map.addLayer({
+                id: "cluster-count",
+                type: "symbol",
+                source: "sourcedata",
+                filter: ["has", "point_count"],
+                layout: {
+                    "text-field": "{point_count_abbreviated}",
+                    "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+                    "text-size": 12
+                }
+            });
+
+            map.addLayer({
+                id: "unclustered-point",
+                type: "circle",
+                source: "sourcedata",
+                filter: ["!", ["has", "point_count"]],
+                paint: {
+                    "circle-color": "#11b4da",
+                    "circle-radius": 4,
+                    "circle-stroke-width": 1,
+                    "circle-stroke-color": "#fff"
+                }
+            });
+
+            // /*inspect a cluster on click*/
+            // map.on('click', 'clusters', function (e) {
+            //     var features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+            //     var clusterId = features[0].properties.cluster_id;
+            //     map.getSource('sourcedata').getClusterExpansionZoom(clusterId, function (err, zoom) {
+            //         if (err)
+            //             return;
+            //
+            //         map.easeTo({
+            //             center: features[0].geometry.coordinates,
+            //             zoom: zoom
+            //         });
+            //     });
+            // });
+
+            map.on('mouseenter', 'clusters', function () {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on('mouseleave', 'clusters', function () {
+                map.getCanvas().style.cursor = '';
+            });
+
             let btn_4 = button_cluster
                 .append('button')
                 .attr('class', 'button')
@@ -146,92 +230,10 @@
                 .attr('value', '2')
                 .on("click", onchange_cluster);
 
+
             function onchange_cluster() {
-                let selected_cluster = d3.select(this).property('value');
-
-                /* hide previous layers */
-                map.removeLayer('clusters-' + current_cluster);
-                map.removeLayer('cluster-count-' + current_cluster);
-
-                total_map_data = get_map_data(data, selected_cluster);
-                makevis_map(total_map_data, selected_cluster);
+                selected_cluster = d3.select(this).property('value');
             }
-
-        });
-
-        let makevis_map = function (total_map_data, selected_cluster) {
-            let timestamp_str = "'" + Date.now() + "'";
-
-            map.addSource(timestamp_str, {
-                type: 'geojson', data: total_map_data,
-                cluster: true,
-                clusterMaxZoom: 14, // Max zoom to cluster points on
-                clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
-            });
-            map.addLayer({
-                id: "clusters-" + selected_cluster,
-                type: "circle",
-                source: timestamp_str,
-                filter: ["has", "point_count"],
-                paint: {
-                    // Use step expressions (https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-                    "circle-color": [
-                        "step",
-                        ["get", "point_count"],
-                        "#d6d539",
-                        100,
-                        "#f187d4",
-                        300,
-                        "#f20510"
-                    ],
-                    "circle-radius": [
-                        "step",
-                        ["get", "point_count"],
-                        20,
-                        100,
-                        30,
-                        750,
-                        40
-                    ]
-                }
-            });
-
-            map.addLayer({
-                id: "cluster-count-" + selected_cluster,
-                type: "symbol",
-                source: timestamp_str,
-                filter: ["has", "point_count"],
-                layout: {
-                    "text-field": "{point_count_abbreviated}",
-                    "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-                    "text-size": 12
-                }
-            });
-
-            // /*inspect a cluster on click*/
-            // map.on('click', 'clusters', function (e) {
-            //     var features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
-            //     var clusterId = features[0].properties.cluster_id;
-            //     map.getSource(timestamp_str).getClusterExpansionZoom(clusterId, function (err, zoom) {
-            //         if (err)
-            //             return;
-            //
-            //         map.easeTo({
-            //             center: features[0].geometry.coordinates,
-            //             zoom: zoom
-            //         });
-            //     });
-            // });
-
-            map.on('mouseenter', 'clusters', function () {
-                map.getCanvas().style.cursor = 'pointer';
-            });
-            map.on('mouseleave', 'clusters', function () {
-                map.getCanvas().style.cursor = '';
-            });
-
-
-            current_cluster = selected_cluster;
         };
 
 
@@ -240,4 +242,4 @@
 
 </body>
 </html>
-
+        
