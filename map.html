@@ -94,7 +94,7 @@
     <strong style="font-size: 20px;">Maryland</strong>
     <br>
     <br>
-    <input type="button" id="title-button-all" value="All">
+    <input type="button" id="title-category-all" value="All">
     <div id="title-button-category"></div>
     <br> Traffic Accident Counts in 2015 January, February, March
     <br>
@@ -364,10 +364,19 @@
                 }
             }
 
+            /* category button */
+            document.getElementById("title-category-all").onclick = function () {
+                
+                /* REMOVE previous layers */
+                map.removeLayer('clusters-' + current_cluster);
+                map.removeLayer('cluster-count-' + current_cluster);
+
+                makevis_map(total_map_data, current_cluster);
+            };
+
             function onchange_category() {
                 let selected_value = d3.select(this).property('value');
                 let values = selected_value.split('-');
-
                 let selected_variable = values[0];
                 let selected_category = values[1];
                 let partial_map_data = get_map_data_partial(data, current_cluster, selected_variable, selected_category)
