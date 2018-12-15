@@ -154,6 +154,21 @@
                         if (selected_category === age_category.toString()) {
                             feature_arr = handle_map_data(feature_arr, x);
                         }
+                    } else if (selected_variable === 'TIME') {
+                        let time_category = parseFloat(x.TIME.substring(11, x.TIME.indexOf(':')));
+                        if (time_category <= 6) {
+                            time_category = '6'
+                        } else if (time_category <= 12) {
+                            time_category = '12'
+                        } else if (time_category <= 18) {
+                            time_category = '18'
+                        } else {
+                            time_category = '24'
+                        }
+                        if (selected_category === time_category) {
+                            feature_arr = handle_map_data(feature_arr, x);
+                        }
+
                     }
                 }
             }
@@ -389,22 +404,22 @@
                 } else if (selected_variable === 'TIME') {
                     title_button_category.append('button')
                         .text('자정-새벽6시')
-                        .attr('value', 'TIME-00~06')
+                        .attr('value', 'TIME-6')
                         .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('새벽6시-낮12시')
-                        .attr('value', 'TIME-06~12')
+                        .attr('value', 'TIME-12')
                         .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('낮12시-오후6시')
-                        .attr('value', 'TIME-12~18')
+                        .attr('value', 'TIME-18')
                         .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('오후6시-자정')
-                        .attr('value', 'TIME-18~24')
+                        .attr('value', 'TIME-24')
                         .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                 }
