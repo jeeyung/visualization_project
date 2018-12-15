@@ -72,7 +72,7 @@
 <div id="button_cluster"></div>
 <div id="button_variable">
     <form>
-        <input type='radio' name="button_variable" id="SEX_CODE">성별</input>
+        <input type='radio' name="button_variable" id="SEX_CODE" checked>성별</input>
         <input type='radio' name="button_variable" id="AGE">연령대</input>
         <input type='radio' name="button_variable" id="DAMAGE_CODE">과실자 상태</input>
         <input type='radio' name="button_variable" id="INJ_SEVER_CODE">부상 정도</input>
@@ -170,12 +170,7 @@
         d3.csv("./maryland_accident_dataset_preprocessed_v3.0.csv").then(function (data) {
 
             current_cluster = null;
-
-            /* Initial display */
-            selected_cluster = '4';
-            let total_map_data = get_map_data(data, selected_cluster);
-            makevis_map(total_map_data, selected_cluster);
-
+            current_category = null;
 
             /* cluster button options */
             let btn_4 = button_cluster
@@ -218,6 +213,24 @@
                 .attr('id', 'cluster2')
                 .on("click", onchange_cluster);
 
+            /* Initial display */
+            selected_cluster = '4';
+            document.getElementById('cluster4').style.backgroundColor = '#4CAF50';
+            selected_category = 'All';
+            document.getElementById('title-category-all').style.backgroundColor = '#4CAF50';
+            title_button_category.append('button')
+                .text('Male')
+                .attr('value', 'SEX_CODE-M')
+                .attr('class', 'button-small button-category')
+                .on("click", onchange_category);
+            title_button_category.append('button')
+                .text('Female')
+                .attr('value', 'SEX_CODE-F')
+                .attr('class', 'button-small button-category')
+                .on("click", onchange_category);
+            let total_map_data = get_map_data(data, selected_cluster);
+            makevis_map(total_map_data, selected_cluster, selected_category);
+
             function onchange_cluster() {
                 let buttons = document.getElementsByClassName('button-cluster')
                 for (var i = 0; i < buttons.length; i++) {
@@ -229,11 +242,11 @@
                 let selected_cluster = d3.select(this).property('value');
 
                 /* REMOVE previous layers */
-                map.removeLayer('clusters-' + current_cluster);
-                map.removeLayer('cluster-count-' + current_cluster);
+                map.removeLayer('clusters-' + current_cluster + '-' + current_category);
+                map.removeLayer('cluster-count-' + current_cluster + '-' + current_category);
 
                 total_map_data = get_map_data(data, selected_cluster);
-                makevis_map(total_map_data, selected_cluster);
+                makevis_map(total_map_data, selected_cluster, current_category);
             }
 
             /* variable button options */
@@ -254,7 +267,10 @@
             };
 
             function onchange_variable(selected_variable) {
+                onchange_category_all('title-category-all');
+
                 title_button_category.selectAll("*").remove();
+
                 if (selected_variable === 'SEX_CODE') {
                     title_button_category.append('button')
                         .text('Male')
@@ -407,23 +423,36 @@
                 document.getElementById(clicked_id).style.backgroundColor = '#4CAF50';
 
                 /* REMOVE previous layers */
-                map.removeLayer('clusters-' + current_cluster);
-                map.removeLayer('cluster-count-' + current_cluster);
+                map.removeLayer('clusters-' + current_cluster + '-' + current_category);
+                map.removeLayer('cluster-count-' + current_cluster + '-' + current_category);
 
-                makevis_map(total_map_data, current_cluster);
+                makevis_map(total_map_data, current_cluster, 'All');
             }
 
             function onchange_category() {
+                let buttons = document.getElementsByClassName('button-category')
+                for (var i = 0; i < buttons.length; i++) {
+                    item = buttons[i]
+                    item.style.backgroundColor = '';
+                }
+                d3.select(this).property('style').backgroundColor = '#4CAF50';
+
                 let selected_value = d3.select(this).property('value');
                 let values = selected_value.split('-');
                 let selected_variable = values[0];
                 let selected_category = values[1];
+
+                /* REMOVE previous layers */
+                map.removeLayer('clusters-' + current_cluster + '-' + current_category);
+                map.removeLayer('cluster-count-' + current_cluster + '-' + current_category);
+
                 let partial_map_data = get_map_data_partial(data, current_cluster, selected_variable, selected_category)
+                makevis_map(partial_map_data, current_cluster, selected_category);
             }
 
         });
 
-        let makevis_map = function (total_map_data, selected_cluster) {
+        let makevis_map = function (total_map_data, selected_cluster, selected_category) {
             let timestamp_str = "'" + Date.now() + "'";
 
             map.addSource(timestamp_str, {
@@ -433,7 +462,7 @@
                 clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
             });
             map.addLayer({
-                id: "clusters-" + selected_cluster,
+                id: "clusters-" + selected_cluster + '-' + selected_category,
                 type: "circle",
                 source: timestamp_str,
                 filter: ["has", "point_count"],
@@ -461,7 +490,7 @@
             });
 
             map.addLayer({
-                id: "cluster-count-" + selected_cluster,
+                id: "cluster-count-" + selected_cluster + '-' + selected_category,
                 type: "symbol",
                 source: timestamp_str,
                 filter: ["has", "point_count"],
@@ -496,6 +525,7 @@
 
 
             current_cluster = selected_cluster;
+            current_category = selected_category;
         };
 
 
