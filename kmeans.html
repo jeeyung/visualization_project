@@ -15,6 +15,26 @@
             fill: #4d4d4d;
         }
 
+        circle.cluster_0, path#hull_0 {
+            fill: #EF597B
+        }
+
+        circle.cluster_1, path#hull_1 {
+            fill: #FF6D31
+        }
+
+        circle.cluster_2, path#hull_2 {
+            fill: #73B66B
+        }
+
+        circle.cluster_3, path#hull_3 {
+            fill: #FFCB18
+        }
+
+        circle.cluster_4, path#hull_4 {
+            fill: #29A2C6
+        }
+
     </style>
 </head>
 <body>
@@ -116,17 +136,6 @@
         n_iters.append("tspan")
             .text(costs.length);
 
-        var cost = stats.append("text")
-            .attr("x", 10)
-            .attr("y", 40);
-
-        cost.append("tspan")
-            .style("font-weight", "bold")
-            .text("Local Minimum: ");
-
-        cost.append("tspan")
-            .text(formatMin(costs[costs.length - 1]));
-
     }
 
     function computeCentroids() {
@@ -168,10 +177,10 @@
                 .transition()
                 .duration(250)
                 .attr("d", d_path === null ? null : "M" + d_path.join("L") + "Z")
-                .attr("fill", 'red')
-                // .attr("fill", color)
-                // .style("stroke", color);
-                .style("stroke", 'red');
+            // .attr("fill", 'red')
+            // .attr("fill", color)
+            // .style("stroke", color);
+            // .style("stroke", 'red');
         });
 
     }
@@ -204,7 +213,7 @@
 
                 // assign data point to cluster of minimum distance
                 d3.select(this)
-                    .attr("fill", 'red')
+                // .attr("fill", 'red')
                     .attr("class", "pt cluster_" + cluster_num);
             });
     }
@@ -234,7 +243,7 @@
             .attr("r", 5)
             .attr("cx", (d) => x(d.x))
             .attr("cy", (d) => y(d.y))
-            .attr('fill', 'red')
+            // .attr('fill', 'red')
             .attr('class', function (d) {
                 return 'pt cluster_' + d.cls_num;
             });
