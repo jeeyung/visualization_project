@@ -137,6 +137,77 @@
         n_iters.append("tspan")
             .text(costs.length);
 
+        /* legend */
+        /* cluster 4 */
+        svg.append('rect')
+            .attr('width', 20)
+            .attr('height', 10)
+            .attr('x', 10)
+            .attr('y', 30)
+            .attr('fill', '#29A2C6');
+        var legend_0 = svg.append('text')
+            .attr("x", 35)
+            .attr("y", 40);
+        legend_0.append("tspan")
+            .style("font-weight", "bold")
+            .text("빗길 사고");
+
+        /* cluster 0 */
+        svg.append('rect')
+            .attr('width', 20)
+            .attr('height', 10)
+            .attr('x', 10)
+            .attr('y', 50)
+            .attr('fill', '#EF597B');
+        var legend_0 = svg.append('text')
+            .attr("x", 35)
+            .attr("y", 60);
+        legend_0.append("tspan")
+            .style("font-weight", "bold")
+            .text("눈길 사고");
+
+        /* cluster 3 */
+        svg.append('rect')
+            .attr('width', 20)
+            .attr('height', 10)
+            .attr('x', 10)
+            .attr('y', 70)
+            .attr('fill', '#FFCB18');
+        var legend_0 = svg.append('text')
+            .attr("x", 35)
+            .attr("y", 80);
+        legend_0.append("tspan")
+            .style("font-weight", "bold")
+            .text("우회전 차선 사고");
+
+        /* cluster 1 */
+        svg.append('rect')
+            .attr('width', 20)
+            .attr('height', 10)
+            .attr('x', 10)
+            .attr('y', 90)
+            .attr('fill', '#FF6D31');
+        var legend_0 = svg.append('text')
+            .attr("x", 35)
+            .attr("y", 100);
+        legend_0.append("tspan")
+            .style("font-weight", "bold")
+            .text("좌회전 차선 사고");
+
+        /* cluster 2 */
+        svg.append('rect')
+            .attr('width', 20)
+            .attr('height', 10)
+            .attr('x', 10)
+            .attr('y', 110)
+            .attr('fill', '#73B66B');
+        var legend_0 = svg.append('text')
+            .attr("x", 35)
+            .attr("y", 120);
+        legend_0.append("tspan")
+            .style("font-weight", "bold")
+            .text("기타");
+
     }
 
     function computeCentroids() {
