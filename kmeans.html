@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset='utf-8'/>
-    <title>v0.3_KMEANSing</title>
+    <title>v0.4_KMEANSing</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
     <style>
 
@@ -177,10 +177,6 @@
                 .transition()
                 .duration(250)
                 .attr("d", d_path === null ? null : "M" + d_path.join("L") + "Z")
-            // .attr("fill", 'red')
-            // .attr("fill", color)
-            // .style("stroke", color);
-            // .style("stroke", 'red');
         });
 
     }
@@ -213,7 +209,6 @@
 
                 // assign data point to cluster of minimum distance
                 d3.select(this)
-                // .attr("fill", 'red')
                     .attr("class", "pt cluster_" + cluster_num);
             });
     }
@@ -243,10 +238,23 @@
             .attr("r", 5)
             .attr("cx", (d) => x(d.x))
             .attr("cy", (d) => y(d.y))
-            // .attr('fill', 'red')
             .attr('class', function (d) {
                 return 'pt cluster_' + d.cls_num;
-            });
+            })
+            .on("click", onchange_cluster);
+        ;
+    }
+
+    /* clustering vis output click event */
+    var path_forclick = document.getElementsByClassName('hull');
+    for (var i = 0; i < path_forclick.length; i++) {
+        path_forclick[i].onclick = function () {
+            onchange_cluster()
+        }
+    }
+
+    function onchange_cluster() {
+        alert('onchange_cluster 함수 호출')
     }
 
 </script>
