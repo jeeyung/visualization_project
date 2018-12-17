@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset='utf-8'/>
-    <title>v0.0_KMEANSing</title>
+    <title>v0.2_KMEANSing</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
     <style>
 
@@ -20,7 +20,7 @@
 <body>
 <div id="chart"></div>
 
-<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
 <script type="text/javascript">
 
     // dims
@@ -47,7 +47,7 @@
 
     // synthetic data with 15 known Gaussian clusters
     // ref: S2 dataset from  http://cs.joensuu.fi/sipu/datasets/
-    var clusters = d3.range(0, 15).map((n) => n.toString());
+    var clusters = d3.range(0, 5).map((n) => n.toString());
 
     // costs for each iteration
     var costs = [];
@@ -60,11 +60,11 @@
         .attr("id", d => "hull_" + d);
 
     // data is 10% sample of original dataset
-    d3.csv("kmeans.csv", d => {
+    d3.csv("kmeans.csv").then(function (d) {
 
-        d.forEach(d => {
-            d.x = +d.x;
-            d.y = +d.y;
+        d.forEach(function (dd) {
+            dd.x = +dd.x;
+            dd.y = +dd.y;
         });
 
         setScaleDomains(d);
@@ -161,7 +161,7 @@
             // path given data points for cluster
             var d_path = d3.polygonHull(d_cluster);
 
-            var color = d3.schemeCategory20[+cluster];
+            var color = d3.scaleOrdinal(d3.schemeCategory10)[+cluster];
 
             // ref: https://bl.ocks.org/mbostock/4341699
             d3.select("#hull_" + cluster)
@@ -169,8 +169,10 @@
                 .transition()
                 .duration(250)
                 .attr("d", d_path === null ? null : "M" + d_path.join("L") + "Z")
-                .attr("fill", color)
-                .style("stroke", color);
+                .attr("fill", 'red')
+                // .attr("fill", color)
+                // .style("stroke", color);
+                .style("stroke", 'red');
         });
 
     }
@@ -196,14 +198,14 @@
                 var dist_min = d3.min(dists);
                 var cluster_num = dists.findIndex(dist => dist == dist_min);
 
-                var color = d3.schemeCategory20[cluster_num];
+                var color = d3.scaleOrdinal(d3.schemeCategory10)[cluster_num];
 
                 // stash min. distance to compute cost
                 d._dist = dist_min;
 
                 // assign data point to cluster of minimum distance
                 d3.select(this)
-                    .attr("fill", d3.color(color).brighter(0.5))
+                    .attr("fill", 'red')
                     .attr("class", "pt cluster_" + cluster_num);
             });
     }
