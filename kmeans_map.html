@@ -53,14 +53,6 @@
             font-size: 10px;
         }
 
-        #map {
-            position: absolute;
-            top: 50%;
-            bottom: 0;
-            height: 50%;
-            width: 50%;
-        }
-
         .button {
             border: none;
             color: black;
@@ -83,10 +75,19 @@
             cursor: pointer;
         }
 
+        #map {
+            position: absolute;
+            top: 40%;
+            left: 40%;
+            bottom: 0;
+            height: 50%;
+            width: 50%;
+        }
+
         #title {
             position: relative;
-            top: 370px;
-            left: 0%;
+            top: 80%;
+            left: 40%;
             bottom: 0;
             width: 450px;
             height: 100px;
@@ -146,7 +147,7 @@
         container: 'map',
         style: 'mapbox://styles/jihyepark/cjpmatebe1p3y2sqrwmfsnpw5',
         center: [-77.0944788, 38.8748153],
-        zoom: 6.5
+        zoom: 5
     });
 
     function handle_map_data(feature_arr, x) {
@@ -168,12 +169,14 @@
     }
 
     function get_map_data(data, selected_cluster, selected_variable, selected_category) {
+        console.log('cluster:' + selected_cluster, '  /var:' + selected_variable + '  /cate:' + selected_category);
+
         let selected_data = {};
         selected_data.type = "FeatureCollection";
         feature_arr = [];
 
         data.forEach(function (x) {
-            if (selected_cluster === x.CLUSTER) {
+            if (selected_cluster === x.CLUSTER || selected_cluster === 'All') {
                 if (selected_variable == null) {
                     feature_arr = handle_map_data(feature_arr, x);
                 } else {
@@ -326,6 +329,7 @@
                     .attr('y', 30)
                     .attr('fill', '#29A2C6');
                 var legend_4 = svg.append('text')
+                    .attr('class', 'legend-cluster')
                     .attr('id', 'cluster4')
                     .attr("x", 35)
                     .attr("y", 40);
@@ -340,6 +344,7 @@
                     .attr('y', 50)
                     .attr('fill', '#EF597B');
                 var legend_0 = svg.append('text')
+                    .attr('class', 'legend-cluster')
                     .attr('id', 'cluster0')
                     .attr("x", 35)
                     .attr("y", 60);
@@ -354,6 +359,7 @@
                     .attr('y', 70)
                     .attr('fill', '#FFCB18');
                 var legend_3 = svg.append('text')
+                    .attr('class', 'legend-cluster')
                     .attr('id', 'cluster3')
                     .attr("x", 35)
                     .attr("y", 80);
@@ -368,6 +374,7 @@
                     .attr('y', 90)
                     .attr('fill', '#FF6D31');
                 var legend_1 = svg.append('text')
+                    .attr('class', 'legend-cluster')
                     .attr('id', 'cluster1')
                     .attr("x", 35)
                     .attr("y", 100);
@@ -382,6 +389,7 @@
                     .attr('y', 110)
                     .attr('fill', '#73B66B');
                 var legend_2 = svg.append('text')
+                    .attr('class', 'legend-cluster')
                     .attr('id', 'cluster2')
                     .attr("x", 35)
                     .attr("y", 120);
@@ -496,13 +504,7 @@
                 ;
             }
 
-            /* clustering vis output click event */
-            // var path_forclick = document.getElementsByClassName('hull');
-            // for (var i = 0; i < path_forclick.length; i++) {
-            //     path_forclick[i].onclick = function () {
-            //         onchange_cluster()
-            //     }
-            // }
+            /* clustering vis output onclick event */
             document.getElementById('hull_0').onclick = function () {
                 onchange_cluster('0')
             };
@@ -520,7 +522,7 @@
             };
 
             /* Initial display */
-            selected_cluster = '4';
+            selected_cluster = 'All';
             // document.getElementById('cluster4').style.fontWeight = '900';
             selected_category = 'All';
             document.getElementById('title-category-all').style.backgroundColor = '#4CAF50';
@@ -538,12 +540,13 @@
             makevis_map(total_map_data, selected_cluster, selected_category);
 
             function onchange_cluster(selected_cluster) {
-                // let buttons = document.getElementsByClassName('button-cluster')
-                // for (var i = 0; i < buttons.length; i++) {
-                //     item = buttons[i];
-                //     item.style.fontWeight = '';
-                // }
-                // document.getElementById(d3.select(this).property('id')).style.fontWeight = '900';
+                console.log('selected cluster = ' + selected_cluster)
+                let legends = document.getElementsByClassName('legend-cluster');
+                for (var i = 0; i < legends.length; i++) {
+                    item = legends[i];
+                    item.style.fontWeight = '';
+                }
+                document.getElementById('cluster' + selected_cluster).style.fontWeight = '900';
 
 
                 /* REMOVE previous layers */
