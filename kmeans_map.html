@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset='utf-8'/>
-    <title>v2.0_Kmeans+Map</title>
+    <title>v2.1_Kmeans+Map</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet'/>
@@ -594,11 +594,6 @@
 
 
                 } else if (selected_variable === 'AGE') {
-                    let cate_1 = title_button_category.append('button')
-                        .text('~9세 이하')
-                        .attr('value', 'AGE-0')
-                        .attr('class', 'button-small button-category')
-                        .on("click", onchange_category);
                     title_button_category.append('button')
                         .text('10대')
                         .attr('value', 'AGE-1')
@@ -676,11 +671,6 @@
                     title_button_category.append('button')
                         .text('Possible Incapacitating Injury')
                         .attr('value', 'INJ_SEVER_CODE-Possible Incapacitating Injury')
-                        .attr('class', 'button-small button-category')
-                        .on("click", onchange_category);
-                    title_button_category.append('button')
-                        .text('Non-incapacitating Injury')
-                        .attr('value', 'INJ_SEVER_CODE-Non-incapacitating Injury')
                         .attr('class', 'button-small button-category')
                         .on("click", onchange_category);
                     title_button_category.append('button')
