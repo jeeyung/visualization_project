@@ -76,7 +76,8 @@
         .enter()
         .append("path")
         .attr("class", "hull")
-        .attr("id", d => "hull_" + d);
+        .attr("id", d => "hull_" + d)
+        .attr("value", d => d);
 
     // data is 10% sample of original dataset
     d3.csv("kmeans.csv").then(function (d) {
@@ -240,6 +241,9 @@
             .attr("cy", (d) => y(d.y))
             .attr('class', function (d) {
                 return 'pt cluster_' + d.cls_num;
+            })
+            .attr('value', function (d) {
+                return d.cls_num;
             })
             .on("click", onchange_cluster);
         ;
