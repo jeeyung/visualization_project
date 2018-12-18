@@ -171,7 +171,6 @@
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-hierarchy.v1.min.js"></script>
 <script>
-    /* 지영 시작 */
     let margin = {top: 20, right: 20, bottom: 50, left: 40}
     let body = d3.select("body");
     function translate(x, y) {
@@ -245,7 +244,7 @@
             obj.DAMAGE_CODE = x.DAMAGE_CODE
             obj.INJ_SEVER_CODE = x.INJ_SEVER_CODE
             //parsing 필요
-            let time_category = parseFloat(x.TIME.substring(11, x.TIME.indexOf(':')));
+            let time_category = parseFloat(x.TIME.substring(10, x.TIME.indexOf(':')));
             if (time_category < 6) {
                 time_category = '6'
             } else if (time_category < 12) {
@@ -280,8 +279,6 @@
         })
         return arr
     }
-    /* 지영 끝 */
-    /* 지혜 시작 */
     /* map */
     let button_cluster = d3.select("#button_cluster");
     let title_button_category = d3.select("#title-button-category");
@@ -307,7 +304,7 @@
         return feature_arr
     }
     function get_map_data(data, selected_cluster, selected_variable, selected_category) {
-        console.log('cluster:' + selected_cluster, '  /var:' + selected_variable + '  /cate:' + selected_category);
+        // console.log('cluster:' + selected_cluster, '  /var:' + selected_variable + '  /cate:' + selected_category);
         let selected_data = {};
         selected_data.type = "FeatureCollection";
         feature_arr = [];
@@ -349,20 +346,16 @@
             }
         });
         selected_data.features = feature_arr;
-        console.log(selected_data);
+        // console.log(selected_data);
         return selected_data
     }
-    /* 지혜 끝 */
     d3.csv("./clustering_dt_preprocessed_v.3.csv").then(function (data) {
-        /* 지영 시작 */
         let bar_category = d3.select('input[name="button_variable"]:checked').property("id")
         // let bar_category = "SEX_CODE"
         let total_bar_data = get_bar_data(data);
         let total_treemap_data = toTree(get_treemap_data(data));
         let cluster_name = "All"
         makevis(total_bar_data, bar_category, total_treemap_data, cluster_name);
-        /* 지영 끝 */
-        /* 지혜 시작 */
         /* map initialize */
         current_cluster = null;
         current_category = null;
@@ -557,9 +550,7 @@
             let partial_map_data = get_map_data(data22, current_cluster, selected_variable, selected_category)
             makevis_map(partial_map_data, current_cluster, selected_category);
         }
-        /* 지혜 끝 */
     });
-    /* 지혜 시작 */
     function onchange_category_all(clicked_id) {
         let buttons = document.getElementsByClassName('button-category')
         for (var i = 0; i < buttons.length; i++) {
@@ -572,8 +563,6 @@
         map.removeLayer('cluster-count-' + current_cluster + '-' + current_category);
         makevis_map(total_map_data, current_cluster, 'All');
     }
-    /* 지혜 끝 */
-    /* 지영 시작 */
     let makevis = function (total_bar_data, cate, total_treemap_data, cluster_name) {
         current_cluster = null;
         current_category = null;
@@ -996,6 +985,8 @@
         d3.select(window).on("click", function () {
             zoom(root);
         });
+
+        //interactive
         d3.selectAll('.hull')
             .on("click", function () {
                 let selected_cluster = d3.select(this).attr('value')
@@ -1015,31 +1006,15 @@
                 else {
                     selected_cluster = '빗길사고'
                 }
-                onchange(selected_cluster)
-                onchange_2(selected_cluster)
+                onchange_bar(selected_cluster)
+                onchange_treemap(selected_cluster)
             })
         d3.selectAll("input").on("change", function(){
-            onchange(cluster_name)
+            onchange_bar(cluster_name)
         })
-        /* clustering vis output onclick event */
-        // document.getElementById('hull_0').onclick = function () {
-        //     onchange_cluster('0', '눈길사고')
-        // };
-        // document.getElementById('hull_1').onclick = function () {
-        //     onchange_cluster('1', '좌회전 차선 사고')
-        // };
-        // document.getElementById('hull_2').onclick = function () {
-        //     onchange_cluster('2', '교차로가 아닌 차선의 사고')
-        // };
-        // document.getElementById('hull_3').onclick = function () {
-        //     onchange_cluster('3', '우회전 차선 사고')
-        // };
-        // document.getElementById('hull_4').onclick = function () {
-        //     onchange_cluster('4', '빗길사고')
-        // };
+
         function onchange_cluster(selected_cluster) {
-            /* 지혜 시작*/
-            console.log('selected cluster = ' + selected_cluster)
+            // console.log('selected cluster = ' + selected_cluster)
             let legends = document.getElementsByClassName('legend-cluster');
             for (var i = 0; i < legends.length; i++) {
                 item = legends[i];
@@ -1052,14 +1027,13 @@
             total_map_data = get_map_data(data22, selected_cluster, null, null);
             makevis_map(total_map_data, selected_cluster, current_category);
             onchange_category_all('title-category-all');
-            /* 지혜 끝 */
         }
-        function onchange(category) {
+        function onchange_bar(category) {
             let selectValue= d3.select('input[name="button_variable"]:checked').property("id")
             let pop_bar_data = data_by_selected_bar(total_bar_data, selectValue, category)
             updateBars(pop_bar_data, selectValue)
         };
-        function onchange_2(selected_cluster){
+        function onchange_treemap(selected_cluster){
             d3.selectAll("rect").attr("stroke", "")
             d3.select("rect[id='" + selected_cluster + "']")
                 .attr("stroke", "dimgrey")
@@ -1071,8 +1045,6 @@
         let initial_for_bar = data_by_selected_bar(total_bar_data, cate, cluster_name)
         updateBars(initial_for_bar, cate)
     };
-    /* 지영 끝 */
-    /* 지혜 시작 */
     let makevis_map = function (total_map_data, selected_cluster, selected_category) {
         let timestamp_str = "'" + Date.now() + "'";
         map.addSource(timestamp_str, {
@@ -1145,6 +1117,5 @@
         current_cluster = selected_cluster;
         current_category = selected_category;
     };
-    /* 지혜 끝 */
 </script>
 </html>
