@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset='utf-8'/>
-    <title>v3.4_pr3+Map</title>
+    <title>v3.5_pr3+Map</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet'/>
@@ -397,7 +397,6 @@
         map.on('load', function () {
             /* Initial display */
             selected_cluster = 'All';
-            // document.getElementById('cluster4').style.fontWeight = '900';
             selected_category = 'All';
             document.getElementById('title-category-all').style.backgroundColor = '#4CAF50';
             title_button_category.append('button')
@@ -1127,7 +1126,7 @@
                 item = legends[i];
                 item.style.fontWeight = '';
             }
-            // document.getElementById('cluster' + selected_cluster).style.fontWeight = '900';
+            document.getElementById('cluster' + selected_cluster).style.fontWeight = '900';
             /* REMOVE previous layers */
             map.removeLayer('clusters-' + current_cluster + '-' + current_category);
             map.removeLayer('cluster-count-' + current_cluster + '-' + current_category);
