@@ -113,18 +113,20 @@ body {
     return "translate("+x+","+y+")";
     }
     function data_by_selected_bar(data, selected, selected_cluster){
+        // console.log(data)
         if (selected_cluster=='All'){
             selected_data = data
-                            .map(function(d) {
+                            .map(function(d) { 
                                 return {[selected]:d[selected]}
                             })
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }       
+        }
         else {
             selected_data = data.filter(function(d){return d.first_label==selected_cluster})
                             .map(function(d) {
                                 return {[selected]:d[selected]}
                             })          
         }
+        // console.log(selected_data)
         let counted = d3.nest()
                         .key(function(d) {return d[selected];})
                         .rollup(function(v) {return v.length;})
@@ -166,9 +168,26 @@ body {
             obj.REPORT_NO = x.REPORT_NO
             obj.SEX_CODE = x.SEX_CODE
             obj.DAMAGE_CODE = x.DAMAGE_CODE
+            obj.INJ_SEVER_CODE = x.INJ_SEVER_CODE
             //parsing 필요
-            obj.TIME = x.TIME
-            obj.AGE = x.AGE
+            let time_category = parseFloat(x.TIME.substring(11, x.TIME.indexOf(':')));
+            if (time_category < 6) {
+                time_category = '6'
+            } else if (time_category < 12) {
+                time_category = '12'
+            } else if (time_category < 18) {
+                time_category = '18'
+            } else {
+                time_category = '24'
+            }
+            obj.TIME = time_category 
+
+            let age_category = parseInt(parseFloat(x.AGE) / 10)
+            if (age_category >= 8) {
+                age_category = 8
+            }
+            obj.AGE = age_category
+            
             arr.push(obj)
         })
         return arr
@@ -190,14 +209,15 @@ body {
     }    
 
     d3.csv("./clustering_dt_preprocessed_v.3.csv").then(function(data){
-        let bar_category = "DAMAGE_CODE"
+        let bar_category = d3.select('input[name="button_variable"]:checked').property("id")
+        // let bar_category = "SEX_CODE"
         let total_bar_data = get_bar_data(data);
         let total_treemap_data = toTree(get_treemap_data(data));
-        // showmap(data)
-        makevis(total_bar_data, bar_category, total_treemap_data);
+        let cluster_name = "All"
+        makevis(total_bar_data, bar_category, total_treemap_data, cluster_name);
     })                                                                                                                                                                                                                                                          ; 
 
-    let makevis= function(total_bar_data, cate, total_treemap_data){
+    let makevis= function(total_bar_data, cate, total_treemap_data, cluster_name){
         current_cluster = null;
         current_category = null;
         /* kmeans clustering */
@@ -435,7 +455,7 @@ body {
             .call(d3.axisLeft(y));
 
         let updateBars = function(data, category){
-            // console.log(cluster)
+            // console.log(data)
             x.domain(data.map(function(element) {return element.key}))
             y.domain([0, d3.max(data,function(element){return element.value})])
             svg.select(".x.axis")
@@ -574,93 +594,73 @@ body {
         }
         d3.select(window).on("click", function() { zoom(root); });
 
-        let select= body.append("div")
-            .append('select')
-            .attr('class','select')
-            .on('change',onchange)
+        // let select= body.append("div")
+        //     .append('select')
+        //     .attr('class','select')
+        //     .on('change',onchange)
         
-        select
-            .selectAll("option")
-            .data(["DAMAGE_CODE","SEX_CODE"])
-            .enter()
-            .append("option")
-            .text(function(d){return d;})
+        // select
+        //     .selectAll("option")
+        //     .data(["DAMAGE_CODE","SEX_CODE"])
+        //     .enter()
+        //     .append("option")
+        //     .text(function(d){return d;})
+
 
         let test = d3.selectAll('.hull')
-                    .on("click", function(){
-                        let selected_cluster = d3.select(this).attr('value')
-                        if (selected_cluster == 0){
-                            selected_cluster = '눈길사고'
-                        }
-                        else if (selected_cluster==1){
-                            selected_cluster ='좌회전 차선 사고'
-                        }
-                        else if (selected_cluster==2){
-                            selected_cluster ='교차로가 아닌 차선의 사고'
-                        }
-                        else if (selected_cluster==3){
-                            selected_cluster ='우회전 차선 사고'
-                        }
-                        else{
-                            selected_cluster ='빗길사고'
-                        }
-                        onchange(selected_cluster)
-                        onchange_2(selected_cluster)
-                    })
-        /* clustering vis output onclick event */
-        document.getElementById('hull_0').onclick = function () {
-            onchange_cluster('눈길사고')
-        };
-        document.getElementById('hull_1').onclick = function () {
-            onchange_cluster('좌회전 차선 사고')
-        };
-        document.getElementById('hull_2').onclick = function () {
-            onchange_cluster('교차로가 아닌 차선의 사고')
-        };
-        document.getElementById('hull_3').onclick = function () {
-            onchange_cluster('우회전 차선 사고')
-        };
-        document.getElementById('hull_4').onclick = function () {
-            onchange_cluster('빗길사고')
-        };
-        /* Initial display */
-        selected_cluster = 'All';
+                .on("click", function(){
+                    let selected_cluster = d3.select(this).attr('value')
+                    onchange_cluster(selected_cluster)
+                    if (selected_cluster == 0){
+                        selected_cluster = '눈길사고'
+                    }
+                    else if (selected_cluster==1){
+                        selected_cluster ='좌회전 차선 사고'
+                    }
+                    else if (selected_cluster==2){
+                        selected_cluster ='교차로가 아닌 차선의 사고'
+                    }
+                    else if (selected_cluster==3){
+                        selected_cluster ='우회전 차선 사고'
+                    }
+                    else{
+                        selected_cluster ='빗길사고'
+                    }
+                    onchange(selected_cluster)
+                    onchange_2(selected_cluster)
+                })
 
-        let selectValue= 'SEX_CODE'
-        let pop_bar_data = data_by_selected_bar(total_bar_data, selectValue, selected_cluster)
-        updateBars(pop_bar_data, selectValue)
+        d3.selectAll("input").on("change", function(){
+            onchange(cluster_name)
+        })
 
         function onchange_cluster(selected_cluster) {
-            console.log('selected cluster = ' + selected_cluster)
+            // console.log('selected cluster = ' + selected_cluster)
             let legends = document.getElementsByClassName('legend-cluster');
             for (var i = 0; i < legends.length; i++) {
                 item = legends[i];
                 item.style.fontWeight = '';
             }
             document.getElementById('cluster' + selected_cluster).style.fontWeight = '900';
-            let selectValue= 'SEX_CODE'
-            let pop_bar_data = data_by_selected_bar(total_bar_data, selectValue, selected_cluster)
-            updateBars(pop_bar_data, selectValue)
+            // let pop_bar_data = data_by_selected_bar(total_bar_data, cate, selected_cluster)
+            // updateBars(pop_bar_data, cate)
         }
-
-        function onchange(selected_cluster) {
-            let selectValue= d3.select('.select').property('value')
-            let pop_bar_data = data_by_selected_bar(total_bar_data, selectValue, selected_cluster)
+        function onchange(category) {
+            let selectValue= d3.select('input[name="button_variable"]:checked').property("id")
+            let pop_bar_data = data_by_selected_bar(total_bar_data, selectValue, category)
             updateBars(pop_bar_data, selectValue)
         };
         function onchange_2(selected_cluster){
-            console.log(selected_cluster)
-            let test = d3.selectAll("rect")
-                    .select("#눈길사고")
-                    .attr("stroke-width", 10)
-                    console.log(test)
-                //     .style("fill", function(){
-                //         console.log(d3.select(this))
-                //     return d3.rgb(d3.select(this).style("fill")).darker(1);
-                // })
+            d3.selectAll("rect").attr("stroke", "")
+            d3.select("rect[id='" + selected_cluster + "']")
+                .attr("stroke", "dimgrey")
+                .attr("stroke-width", 5)
+                .style("fill", function(){
+                return d3.rgb(d3.select(this).style("fill")).darker(5);
+                })
         };
 
-        let initial_for_bar = data_by_selected_bar(total_bar_data, cate, selected_cluster)
+        let initial_for_bar = data_by_selected_bar(total_bar_data, cate, cluster_name)
         updateBars(initial_for_bar, cate)
     };
     
