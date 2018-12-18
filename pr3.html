@@ -1,54 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<style>
-    .line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 1.5px;
-}    
-.hovered{
-    stroke-width:4px;
+    <meta charset='utf-8'/>
+    <title>v3.5_pr3+Map</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet'/>
+    <style>
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
 
-}
-.root{
-  fill: cadetblue;
-  opacity: 0;
-  stroke: white;
-}
-text {
-  font-family: "Helvetica Neue", Helvetica, sans-serif;
-  fill: black;
-  font-size: 10px;
-}
-body {
-  font: 10px sans-serif;
-  position: relative;
-}
+        .hovered {
+            stroke-width: 4px;
+        }
 
-.node {
-  box-sizing: border-box;
-  position: absolute;
-  overflow: hidden;
-}
+        .root {
+            fill: cadetblue;
+            opacity: 0;
+            stroke: white;
+        }
 
-.node-label {
-  padding: 4px;
-  line-height: 1em;
-  white-space: pre;
-}
+        text {
+            font-family: "Helvetica Neue", Helvetica, sans-serif;
+            fill: black;
+            font-size: 10px;
+        }
 
-.node-value {
-  color: rgba(0,0,0,0.8);
-  font-size: 9px;
-  margin-top: 1px;
-}
-.chart {
-  display: block;
-  margin: auto;
-  margin-top: 40px;
-}
+        body {
+            font: 10px sans-serif;
+            position: relative;
+        }
+
+        .node {
+            box-sizing: border-box;
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .node-label {
+            padding: 4px;
+            line-height: 1em;
+            white-space: pre;
+        }
+
+        .node-value {
+            color: rgba(0, 0, 0, 0.8);
+            font-size: 9px;
+            margin-top: 1px;
+        }
+
+        .chart {
+            display: block;
+            margin: auto;
+            margin-top: 40px;
+        }
+
         .pt {
             stroke: black;
         }
@@ -60,109 +69,202 @@ body {
 
         circle.cluster_0, path#hull_0 {
             fill: #EF597B;
-            opacity : 0.7
+            opacity: 0.7
         }
 
         circle.cluster_1, path#hull_1 {
             fill: #FF6D31;
-            opacity : 0.7
+            opacity: 0.7
         }
 
         circle.cluster_2, path#hull_2 {
             fill: #73B66B;
-            opacity : 0.7
+            opacity: 0.7
         }
 
         circle.cluster_3, path#hull_3 {
             fill: #FFCB18;
-            opacity : 0.7
+            opacity: 0.7
         }
 
         circle.cluster_4, path#hull_4 {
             fill: #29A2C6;
-            opacity : 0.7
+            opacity: 0.7
         }
 
         path, circle:hover {
             cursor: pointer;
         }
-</style>
+
+        /* map */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .options {
+            position: relative;
+            height: 10%;
+            font-size: 10px;
+        }
+
+        .button {
+            border: none;
+            color: black;
+            /*padding: 15px 32px;*/
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            /*font-size: 16px;*/
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        .button-small {
+            border: none;
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        #map {
+            position: absolute;
+            top: 10px;
+            left: 60%;
+            bottom: 0;
+            height: 400px;
+            width: 400px;
+        }
+
+        #title {
+            position: relative;
+            top: -5px;
+            left: 60%;
+            bottom: 0;
+            width: 400px;
+            height: 95px;
+            box-sizing: border-box;
+            border-color: rgba(65, 73, 80, 0.9);
+            border-width: medium;
+            border-style: solid;
+            /*padding: 8px 24px;*/
+            font-family: 'Ropa Sans', sans-serif;
+            font-size: 7pt;
+            color: rgba(229, 229, 216, 0.9);
+            text-align: center;
+            background: rgba(42, 54, 60, 0.9);
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+            z-index: 9999;
+            overflow: auto;
+        }
+    </style>
 </head>
 <body>
 
 <div id="chart"></div>
 <div id="button_variable" class="options">
-        <form>
-            <input type='radio' name="button_variable" id="SEX_CODE" checked>성별</input>
-            <input type='radio' name="button_variable" id="AGE">연령대</input>
-            <input type='radio' name="button_variable" id="DAMAGE_CODE">과실자 상태</input>
-            <input type='radio' name="button_variable" id="INJ_SEVER_CODE">부상 정도</input>
-            <input type='radio' name="button_variable" id="TIME">시간대</input>
-        </form>
-    </div>
-   
+    <form>
+        <input type='radio' name="button_variable" id="SEX_CODE" checked>성별</input>
+        <input type='radio' name="button_variable" id="AGE">연령대</input>
+        <input type='radio' name="button_variable" id="DAMAGE_CODE">과실자 상태</input>
+        <input type='radio' name="button_variable" id="INJ_SEVER_CODE">부상 정도</input>
+        <input type='radio' name="button_variable" id="TIME">시간대</input>
+    </form>
+</div>
+
+<div id='map'></div>
+<div id="title">
+    <input type="button" id="title-category-all" class="button-small button-category" value="All">
+    <div id="title-button-category"></div>
+    <br> Traffic Accident Counts of Maryland in 2015 January, February, March
+    <br>
+    <strong style="color: black; background-color:#ffffff">~ 10</strong> | <strong
+        style="color: black; background-color:#ffb3b3">11 ~ 50</strong> | <strong
+        style="color: black; background-color:#ff6666">51 ~ 100</strong> | <strong
+        style="color: black; background-color:#ff1a1a">101 ~ 300</strong> | <strong
+        style="color: black; background-color:#800000">301 ~</strong>
+</div>
+
 </body>
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-hierarchy.v1.min.js"></script>
 <script>
-    let button_cluster = d3.select("#button_cluster");
+    /* 지영 시작 */
     let margin = {top: 20, right: 20, bottom: 50, left: 40}
     let body = d3.select("body");
-    
-    function translate(x,y) {
-    return "translate("+x+","+y+")";
+
+    function translate(x, y) {
+        return "translate(" + x + "," + y + ")";
     }
-    function data_by_selected_bar(data, selected, selected_cluster){
-        // console.log(data)
-        if (selected_cluster=='All'){
+
+    function data_by_selected_bar(data, selected, selected_cluster) {
+        if (selected_cluster == 'All') {
             selected_data = data
-                            .map(function(d) { 
-                                return {[selected]:d[selected]}
-                            })
+                .map(function (d) {
+                    return {[selected]: d[selected]}
+                })
         }
         else {
-            selected_data = data.filter(function(d){return d.first_label==selected_cluster})
-                            .map(function(d) {
-                                return {[selected]:d[selected]}
-                            })          
+            selected_data = data.filter(function (d) {
+                return d.first_label == selected_cluster
+            })
+                .map(function (d) {
+                    return {[selected]: d[selected]}
+                })
         }
         // console.log(selected_data)
         let counted = d3.nest()
-                        .key(function(d) {return d[selected];})
-                        .rollup(function(v) {return v.length;})
-                        .entries(selected_data);
+            .key(function (d) {
+                return d[selected];
+            })
+            .rollup(function (v) {
+                return v.length;
+            })
+            .entries(selected_data);
         // console.log(JSON.stringify(counted))
         return counted
     }
-    
-    function toTree(data){
+
+    function toTree(data) {
         let obj = {};
         obj.name = "maryland주 교통사고"
-        obj.children =[]
-        let cluster_1_label = d3.set(data.map(function(d) { return d.first_label; })).values();
-        for(let i = 0; i<cluster_1_label.length;i++){
-            let filtered = data.filter(function(d){return d.first_label==cluster_1_label[i];})
+        obj.children = []
+        let cluster_1_label = d3.set(data.map(function (d) {
+            return d.first_label;
+        })).values();
+        for (let i = 0; i < cluster_1_label.length; i++) {
+            let filtered = data.filter(function (d) {
+                return d.first_label == cluster_1_label[i];
+            })
             let child_obj = {};
             child_obj.name = cluster_1_label[i]
             let child_arr = [];
-            let cluster_2_label = d3.set(filtered.map(function(d) {return d.second_labeling;})).values();
-            for(let j=0;j<cluster_2_label.length;j++){
-                let len = filtered.filter(function(d){return d.second_labeling==cluster_2_label[j]}).length;
+            let cluster_2_label = d3.set(filtered.map(function (d) {
+                return d.second_labeling;
+            })).values();
+            for (let j = 0; j < cluster_2_label.length; j++) {
+                let len = filtered.filter(function (d) {
+                    return d.second_labeling == cluster_2_label[j]
+                }).length;
                 let child_2_obj = {};
                 child_2_obj.name = cluster_2_label[j]
                 child_2_obj.value = len
                 child_arr.push(child_2_obj)
             }
-            child_obj.children = child_arr 
+            child_obj.children = child_arr
             obj.children.push(child_obj)
         }
         return obj
     }
 
-    function get_bar_data(data){
+    function get_bar_data(data) {
         let arr = [];
-        data.forEach(function(x){
-            let obj={};
+        data.forEach(function (x) {
+            let obj = {};
             obj.first_label = x.first_label
             obj.second_labeling = x.second_labeling
             obj.REPORT_NO = x.REPORT_NO
@@ -193,10 +295,10 @@ body {
         return arr
     }
 
-    function get_treemap_data(data){
+    function get_treemap_data(data) {
         let arr = [];
-        data.forEach(function(x){
-            let obj={};
+        data.forEach(function (x) {
+            let obj = {};
             obj.first_label = x.first_label
             obj.second_labeling = x.second_labeling
             // obj.SEX_CODE = x.SEX_CODE
@@ -206,7 +308,26 @@ body {
             arr.push(obj)
         })
         return arr
-    }    
+    }
+
+    /* 지영 끝 */
+
+    /* 지혜 시작 */
+    /* map */
+    let button_cluster = d3.select("#button_cluster");
+    let title_button_category = d3.select("#title-button-category");
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoiamloeWVwYXJrIiwiYSI6ImNqZmtzazBpYjA5MWEzM25ndTEwank5ZTQifQ.G984GU_4hun02lWy7hMwkA';
+    let map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/jihyepark/cjpmatebe1p3y2sqrwmfsnpw5',
+        center: [-77.0944788, 38.8748153],
+        zoom: 5
+    });
+
+    function handle_map_data(feature_arr, x) {
+        let obj = {};
+        obj.type = "Feature";
 
     d3.csv("./clustering_dt_preprocessed_v.3.csv").then(function(data){
         let bar_category = d3.select('input[name="button_variable"]:checked').property("id")
@@ -218,6 +339,317 @@ body {
     })                                                                                                                                                                                                                                                          ; 
 
     let makevis= function(total_bar_data, cate, total_treemap_data, cluster_name){
+        let obj_geo = {}
+        obj_geo.type = "Point";
+        obj_geo.coordinates = [parseFloat(x.LONGITUDE), parseFloat(x.LATITUDE)];
+        obj.geometry = obj_geo;
+
+        let obj_prop = {};
+        obj_prop.KEY_INDEX = x.KEY_INDEX;
+        obj_prop.SEX_CODE = x.SEX_CODE;
+        obj.properties = obj_prop;
+
+        feature_arr.push(obj)
+        return feature_arr
+    }
+
+    function get_map_data(data, selected_cluster, selected_variable, selected_category) {
+        console.log('cluster:' + selected_cluster, '  /var:' + selected_variable + '  /cate:' + selected_category);
+
+        let selected_data = {};
+        selected_data.type = "FeatureCollection";
+        feature_arr = [];
+
+        data.forEach(function (x) {
+            if (selected_cluster === x.cluster || selected_cluster === 'All') {
+                if (selected_variable == null) {
+                    feature_arr = handle_map_data(feature_arr, x);
+                } else {
+                    if (selected_variable === 'SEX_CODE' && selected_category === x.SEX_CODE) {
+                        feature_arr = handle_map_data(feature_arr, x);
+                    } else if (selected_variable === 'DAMAGE_CODE' && selected_category === x.DAMAGE_CODE) {
+                        feature_arr = handle_map_data(feature_arr, x);
+                    } else if (selected_variable === 'INJ_SEVER_CODE' && selected_category === x.INJ_SEVER_CODE) {
+                        feature_arr = handle_map_data(feature_arr, x);
+                    } else if (selected_variable === 'AGE') {
+                        let age_category = parseInt(parseFloat(x.AGE) / 10)
+                        if (age_category >= 8) {
+                            age_category = 8
+                        }
+                        if (selected_category === age_category.toString()) {
+                            feature_arr = handle_map_data(feature_arr, x);
+                        }
+                    } else if (selected_variable === 'TIME') {
+                        let time_category = parseFloat(x.TIME.substring(10, x.TIME.indexOf(':')));
+                        if (time_category < 6) {
+                            time_category = '6'
+                        } else if (time_category < 12) {
+                            time_category = '12'
+                        } else if (time_category < 18) {
+                            time_category = '18'
+                        } else {
+                            time_category = '24'
+                        }
+                        if (selected_category === time_category) {
+                            feature_arr = handle_map_data(feature_arr, x);
+                        }
+
+                    }
+                }
+            }
+        });
+        selected_data.features = feature_arr;
+
+        console.log(selected_data);
+        return selected_data
+    }
+
+    /* 지혜 끝 */
+
+    d3.csv("./clustering_dt_preprocessed_v.3.csv").then(function (data) {
+        /* 지영 시작 */
+        let bar_category = "DAMAGE_CODE"
+        let total_bar_data = get_bar_data(data);
+        let total_treemap_data = toTree(get_treemap_data(data));
+        // showmap(data)
+        makevis(total_bar_data, bar_category, total_treemap_data);
+        /* 지영 끝 */
+
+        /* 지혜 시작 */
+        /* map initialize */
+        current_cluster = null;
+        current_category = null;
+
+        data22 = data
+
+        map.on('load', function () {
+            /* Initial display */
+            selected_cluster = 'All';
+            selected_category = 'All';
+            document.getElementById('title-category-all').style.backgroundColor = '#4CAF50';
+            title_button_category.append('button')
+                .text('Male')
+                .attr('value', 'SEX_CODE:M')
+                .attr('class', 'button-small button-category')
+                .on("click", onchange_category);
+            title_button_category.append('button')
+                .text('Female')
+                .attr('value', 'SEX_CODE:F')
+                .attr('class', 'button-small button-category')
+                .on("click", onchange_category);
+            total_map_data = get_map_data(data, selected_cluster, null, null);
+            makevis_map(total_map_data, selected_cluster, selected_category);
+        });
+
+        /* variable button options */
+        document.getElementById("SEX_CODE").onchange = function () {
+            onchange_variable('SEX_CODE')
+        };
+        document.getElementById("AGE").onchange = function () {
+            onchange_variable('AGE')
+        };
+        document.getElementById("DAMAGE_CODE").onchange = function () {
+            onchange_variable('DAMAGE_CODE')
+        };
+        document.getElementById("INJ_SEVER_CODE").onchange = function () {
+            onchange_variable('INJ_SEVER_CODE')
+        };
+        document.getElementById("TIME").onchange = function () {
+            onchange_variable('TIME')
+        };
+
+        function onchange_variable(selected_variable) {
+            onchange_category_all('title-category-all');
+
+            title_button_category.selectAll("*").remove();
+
+            if (selected_variable === 'SEX_CODE') {
+                title_button_category.append('button')
+                    .text('Male')
+                    .attr('value', 'SEX_CODE:M')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('Female')
+                    .attr('value', 'SEX_CODE:F')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+
+
+            } else if (selected_variable === 'AGE') {
+                title_button_category.append('button')
+                    .text('~9세 이하')
+                    .attr('value', 'AGE:0')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('10대')
+                    .attr('value', 'AGE:1')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('20대')
+                    .attr('value', 'AGE:2')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('30대')
+                    .attr('value', 'AGE:3')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('40대')
+                    .attr('value', 'AGE:4')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('50대')
+                    .attr('value', 'AGE:5')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('60대')
+                    .attr('value', 'AGE:6')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('70대')
+                    .attr('value', 'AGE:7')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('80세 이상')
+                    .attr('value', 'AGE:8')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+
+            } else if (selected_variable === 'DAMAGE_CODE') {
+                title_button_category.append('button')
+                    .text('Destroyed')
+                    .attr('value', 'DAMAGE_CODE:Destroyed')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('Disabling')
+                    .attr('value', 'DAMAGE_CODE:Disabling')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('Functional')
+                    .attr('value', 'DAMAGE_CODE:Functional')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('No Damage')
+                    .attr('value', 'DAMAGE_CODE:No Damage')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('Superficial')
+                    .attr('value', 'DAMAGE_CODE:Superficial')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+
+            } else if (selected_variable === 'INJ_SEVER_CODE') {
+                title_button_category.append('button')
+                    .text('No Injury')
+                    .attr('value', 'INJ_SEVER_CODE:No Injury')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('Possible Incapacitating Injury')
+                    .attr('value', 'INJ_SEVER_CODE:Possible Incapacitating Injury')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('Non-incapacitating Injury')
+                    .attr('value', 'INJ_SEVER_CODE:Non-incapacitating Injury')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('Incapacitating/Disabled Injury')
+                    .attr('value', 'INJ_SEVER_CODE:Incapacitating/Disabled Injury')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('Fatal Injury')
+                    .attr('value', 'INJ_SEVER_CODE:Fatal Injury')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+
+            } else if (selected_variable === 'TIME') {
+                title_button_category.append('button')
+                    .text('자정-새벽6시')
+                    .attr('value', 'TIME:6')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('새벽6시-낮12시')
+                    .attr('value', 'TIME:12')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('낮12시-오후6시')
+                    .attr('value', 'TIME:18')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('오후6시-자정')
+                    .attr('value', 'TIME:24')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+            }
+        }
+
+        /* category button */
+        document.getElementById("title-category-all").onclick = function () {
+            onchange_category_all(d3.select(this).property('id'));
+        };
+
+        function onchange_category() {
+            let buttons = document.getElementsByClassName('button-category')
+            for (var i = 0; i < buttons.length; i++) {
+                item = buttons[i]
+                item.style.backgroundColor = '';
+            }
+            d3.select(this).property('style').backgroundColor = '#4CAF50';
+
+            let selected_value = d3.select(this).property('value');
+            let values = selected_value.split(':');
+            let selected_variable = values[0];
+            let selected_category = values[1];
+
+            /* REMOVE previous layers */
+            map.removeLayer('clusters-' + current_cluster + '-' + current_category);
+            map.removeLayer('cluster-count-' + current_cluster + '-' + current_category);
+
+            let partial_map_data = get_map_data(data22, current_cluster, selected_variable, selected_category)
+            makevis_map(partial_map_data, current_cluster, selected_category);
+        }
+
+        /* 지혜 끝 */
+    });
+
+    /* 지혜 시작 */
+    function onchange_category_all(clicked_id) {
+        let buttons = document.getElementsByClassName('button-category')
+        for (var i = 0; i < buttons.length; i++) {
+            item = buttons[i]
+            item.style.backgroundColor = '';
+        }
+        document.getElementById(clicked_id).style.backgroundColor = '#4CAF50';
+
+        /* REMOVE previous layers */
+        map.removeLayer('clusters-' + current_cluster + '-' + current_category);
+        map.removeLayer('cluster-count-' + current_cluster + '-' + current_category);
+
+        makevis_map(total_map_data, current_cluster, 'All');
+    }
+
+    /* 지혜 끝 */
+
+    /* 지영 시작 */
+    let makevis = function (total_bar_data, cate, total_treemap_data) {
         current_cluster = null;
         current_category = null;
         /* kmeans clustering */
@@ -274,6 +706,7 @@ body {
                 costs.push(cost)
             }, 500);
         });
+
         function displayStats(costs) {
             var stats = svg_plot.append("g")
                 .attr("id", "stats");
@@ -357,6 +790,7 @@ body {
             legend_2.append("tspan")
                 .text("교차로가 아닌 차선의 사고");
         }
+
         function computeCentroids() {
             var centroids = clusters.map(cluster => {
                 var d = d3.selectAll(".cluster_" + cluster)
@@ -368,6 +802,7 @@ body {
             });
             return centroids;
         }
+
         /* set path */
         function addHull() {
             clusters.forEach(cluster => {
@@ -386,12 +821,14 @@ body {
                     .attr("d", d_path === null ? null : "M" + d_path.join("L") + "Z")
             });
         }
+
         function computeCost() {
             var dists = d3.selectAll("circle")
                 .data()
                 .map(d => d._dist);
             return d3.sum(dists);
         }
+
         function assignCluster(centroids) {
             d3.selectAll("circle")
                 .each(function (d) {
@@ -408,6 +845,7 @@ body {
                         .attr("class", "pt cluster_" + cluster_num);
                 });
         }
+
         function computeDistances(centroids, d_pt) {
             var dists = centroids.map(centroid => {
                 var dist = Math.sqrt(Math.pow(d_pt.x - centroid.x, 2) + Math.pow(d_pt.y - centroid.y, 2));
@@ -415,10 +853,12 @@ body {
             })
             return dists;
         }
+
         function setScaleDomains(d) {
             plot_x.domain(d3.extent(d, d => d.x));
             plot_y.domain(d3.extent(d, d => d.y));
         }
+
         function plotCircles(d) {
             circles.selectAll("circle")
                 .data(d)
@@ -433,19 +873,19 @@ body {
                 });
             ;
         }
+
         //bar
-        let bar_width= 500 - margin.left - margin.right;
+        let bar_width = 500 - margin.left - margin.right;
         let bar_height = 300 - margin.top - margin.bottom;
         let svg = body.append("svg")
             .attr("width", bar_width + margin.left + margin.right)
             .attr("height", bar_height + margin.top + margin.bottom)
             .append("g")
-            .attr("transform",translate(margin.left, margin.top));
+            .attr("transform", translate(margin.left, margin.top));
         //bar-chart
-        let x = d3.scaleBand().range([0,bar_width])
+        let x = d3.scaleBand().range([0, bar_width])
         let y = d3.scaleLinear().range([bar_height, 0])
         let color = d3.scaleOrdinal(d3.schemeCategory10);
-
         let xAxis = svg.append("g")
             .attr("class", "x axis")
             .attr("transform", translate(0, bar_height))
@@ -453,217 +893,386 @@ body {
         let yAxis = svg.append("g")
             .attr("class", "y axis")
             .call(d3.axisLeft(y));
-
-        let updateBars = function(data, category){
-            // console.log(data)
-            x.domain(data.map(function(element) {return element.key}))
-            y.domain([0, d3.max(data,function(element){return element.value})])
+        let updateBars = function (data, category) {
+            // console.log(cluster)
+            x.domain(data.map(function (element) {
+                return element.key
+            }))
+            y.domain([0, d3.max(data, function (element) {
+                return element.value
+            })])
             svg.select(".x.axis")
                 .call(d3.axisBottom(x));
-
             svg.select(".y.axis")
                 .call(d3.axisLeft(y));
+            let bar = svg.selectAll(".bar").data(data, d => d.key);
 
-            let bar = svg.selectAll(".bar").data(data, d=>d.key);
-            
             bar
                 .exit()
                 .remove();
-
             let enter_bar = bar
                 .enter()
                 .append("rect")
                 .attr("class", "bar")
                 .attr("width", x.bandwidth())
                 .attr("height", d => bar_height - y(d.value))
-                .style("fill", (d,i) => color(i))
+                .style("fill", (d, i) => color(i))
                 .attr("transform", d => translate(x(d.key), y(d.value)))
                 .style("opacity", 0)
-                .attr("id", function(d) {return d.key;})
-
+                .attr("id", function (d) {
+                    return d.key;
+                })
             let update = bar
                 .transition()
                 .duration(1000)
                 .attr("width", x.bandwidth())
                 .attr("height", d => bar_height - y(d.value))
-                .style("fill", (d,i)=>color(i))
+                .style("fill", (d, i) => color(i))
                 .attr("transform", d => translate(x(d.key), y(d.value)))
-
             enter_bar.transition().duration(1000).delay(100).style("opacity", 1)
         };
-
         // treemap
         let treemap_width = 500;
         let treemap_height = 300;
-
         let svg_2 = body.append("svg")
             .attr("width", treemap_width)
             .attr("height", treemap_height)
-
         let color_for_treemap = d3.scaleOrdinal()
             .range(d3.schemeCategory10
-            .map(function(c) {c = d3.rgb(c); c.opacity = 0.7; return c; }));
-            
-        let x2 = d3.scaleLinear().range([0,treemap_width])
-        let y2 = d3.scaleLinear().range([0,treemap_height])
-        let treemap = d3.treemap()
-                    .size([treemap_width, treemap_height])
-                    .padding(1)
-                    .round(false);
+                .map(function (c) {
+                    c = d3.rgb(c);
+                    c.opacity = 0.7;
+                    return c;
+                }));
 
+        let x2 = d3.scaleLinear().range([0, treemap_width])
+        let y2 = d3.scaleLinear().range([0, treemap_height])
+        let treemap = d3.treemap()
+            .size([treemap_width, treemap_height])
+            .padding(1)
+            .round(false);
         let tr_data = d3.hierarchy(total_treemap_data);
         root = n = tr_data
-        tr_data.sum(function(d){return d.value;})
-            .sort(function(a,b){return b.value - a.value;});
-            
+        tr_data.sum(function (d) {
+            return d.value;
+        })
+            .sort(function (a, b) {
+                return b.value - a.value;
+            });
+
         treemap(tr_data)
         let node = svg_2
             .selectAll('g')
             .data(tr_data.descendants())
             .enter()
             .append('g')
-            .attr('class', function(d) {return d.parent==null? 'root':'cell'})
-            .attr('transform', function(d) {return 'translate(' + [d.x0, d.y0] + ')'})
-            .on("click", function(d) {return zoom(n == d.parent ?  n.parent:d.parent)});
-
+            .attr('class', function (d) {
+                return d.parent == null ? 'root' : 'cell'
+            })
+            .attr('transform', function (d) {
+                return 'translate(' + [d.x0, d.y0] + ')'
+            })
+            .on("click", function (d) {
+                return zoom(n == d.parent ? n.parent : d.parent)
+            });
         node
             .append('rect')
-            .attr('id', (d, i)=>d.data.name)
-            .attr('width', function(d) { return d.x1 - d.x0; })
-            .attr('height', function(d) { return d.y1 - d.y0; })
-            .style("fill", function(d) {return color_for_treemap(d.data.name); })
-            .style("opacity", function(d) {return d.leaves().length==4? 1:0});
-            
+            .attr('id', (d, i) => d.data.name)
+            .attr('width', function (d) {
+                return d.x1 - d.x0;
+            })
+            .attr('height', function (d) {
+                return d.y1 - d.y0;
+            })
+            .style("fill", function (d) {
+                return color_for_treemap(d.data.name);
+            })
+            .style("opacity", function (d) {
+                return d.leaves().length == 4 ? 1 : 0
+            });
+
         node
             .append('text')
-            .attr("x", function(d) { return (d.x1 - d.x0) / 2; })
-            .attr("y", function(d) { return (d.y1 - d.y0) / 2; })
+            .attr("x", function (d) {
+                return (d.x1 - d.x0) / 2;
+            })
+            .attr("y", function (d) {
+                return (d.y1 - d.y0) / 2;
+            })
             .style("font-size", "12px")
             .attr("text-anchor", "middle")
-            .text(function(d) { return d.data.name; })
-            .style("opacity", function(d) { d.w = this.getComputedTextLength(); return d.x1-d.x0> d.w ? 1 : 0; })
-            .style("opacity", function(d) {return d.leaves().length==4? 1:0});
+            .text(function (d) {
+                return d.data.name;
+            })
+            .style("opacity", function (d) {
+                d.w = this.getComputedTextLength();
+                return d.x1 - d.x0 > d.w ? 1 : 0;
+            })
+            .style("opacity", function (d) {
+                return d.leaves().length == 4 ? 1 : 0
+            });
 
         function zoom(d) {
-            let dx = d.x1 - d.x0 
+            let dx = d.x1 - d.x0
             let dy = d.y1 - d.y0
             let kx = treemap_width / dx, ky = treemap_height / dy;
             x2.domain([d.x0, d.x1]);
             y2.domain([d.y0, d.y1]);
-            
+
             let t = svg_2.selectAll("g.cell").transition()
                 .duration(d3.event.altKey ? 7500 : 750)
-                .attr("transform", function(d) {return "translate(" + [x2(d.x0),y2(d.y0)] + ")"; });
-                
-            t.select("rect")
-                .attr("width", function(d) { return kx * (d.x1-d.x0) - 1; })
-                .attr("height", function(d) { return ky * (d.y1-d.y0) - 1; })
-                .style("fill", function(d) { return color_for_treemap(kx==1? d.data.name:d.parent.data.name); })
-                .style("opacity", function(d) {
-                    if (kx == 1){
-                        if (d.leaves().length==4) {
-                        return 1}
-                        else{return 0}
-                    }
-                    else{
-                    if (d.leaves().length==4) {
-                    return 0}
-                    else{return 1}
-                    }
+                .attr("transform", function (d) {
+                    return "translate(" + [x2(d.x0), y2(d.y0)] + ")";
                 });
 
-            t.select("text")
-                .attr("x", function(d) { return kx * (d.x1-d.x0) / 2; })
-                .attr("y", function(d) { return ky * (d.y1-d.y0) / 2; })
-                .style("opacity", function(d) {
-                    if (kx == 1){
-                        if (d.leaves().length==4) {
-                        return 1}
-                        else{return 0}
+            t.select("rect")
+                .attr("width", function (d) {
+                    return kx * (d.x1 - d.x0) - 1;
+                })
+                .attr("height", function (d) {
+                    return ky * (d.y1 - d.y0) - 1;
+                })
+                .style("fill", function (d) {
+                    return color_for_treemap(kx == 1 ? d.data.name : d.parent.data.name);
+                })
+                .style("opacity", function (d) {
+                    if (kx == 1) {
+                        if (d.leaves().length == 4) {
+                            return 1
+                        }
+                        else {
+                            return 0
+                        }
                     }
-                    else{
-                    if (d.leaves().length==4 ) {
-                    return 0}
-                    else{return 1}
+                    else {
+                        if (d.leaves().length == 4) {
+                            return 0
+                        }
+                        else {
+                            return 1
+                        }
+                    }
+                });
+            t.select("text")
+                .attr("x", function (d) {
+                    return kx * (d.x1 - d.x0) / 2;
+                })
+                .attr("y", function (d) {
+                    return ky * (d.y1 - d.y0) / 2;
+                })
+                .style("opacity", function (d) {
+                    if (kx == 1) {
+                        if (d.leaves().length == 4) {
+                            return 1
+                        }
+                        else {
+                            return 0
+                        }
+                    }
+                    else {
+                        if (d.leaves().length == 4) {
+                            return 0
+                        }
+                        else {
+                            return 1
+                        }
                     }
                 })
-                .style("font-size", function(d) { return kx * (d.x1-d.x0) > d.w ? "12px": "7px"; });
-                
+                .style("font-size", function (d) {
+                    return kx * (d.x1 - d.x0) > d.w ? "12px" : "7px";
+                });
+
             n = d;
             d3.event.stopPropagation();
         }
-        d3.select(window).on("click", function() { zoom(root); });
+        d3.select(window).on("click", function () {
+            zoom(root);
+        });
+        let select = body.append("div")
+            .append('select')
+            .attr('class', 'select')
+            .on('change', onchange)
 
-        // let select= body.append("div")
-        //     .append('select')
-        //     .attr('class','select')
-        //     .on('change',onchange)
-        
-        // select
-        //     .selectAll("option")
-        //     .data(["DAMAGE_CODE","SEX_CODE"])
-        //     .enter()
-        //     .append("option")
-        //     .text(function(d){return d;})
-
-
+        select
+            .selectAll("option")
+            .data(["DAMAGE_CODE", "SEX_CODE"])
+            .enter()
+            .append("option")
+            .text(function (d) {
+                return d;
+            })
         let test = d3.selectAll('.hull')
-                .on("click", function(){
-                    let selected_cluster = d3.select(this).attr('value')
-                    onchange_cluster(selected_cluster)
-                    if (selected_cluster == 0){
-                        selected_cluster = '눈길사고'
-                    }
-                    else if (selected_cluster==1){
-                        selected_cluster ='좌회전 차선 사고'
-                    }
-                    else if (selected_cluster==2){
-                        selected_cluster ='교차로가 아닌 차선의 사고'
-                    }
-                    else if (selected_cluster==3){
-                        selected_cluster ='우회전 차선 사고'
-                    }
-                    else{
-                        selected_cluster ='빗길사고'
-                    }
-                    onchange(selected_cluster)
-                    onchange_2(selected_cluster)
-                })
+            .on("click", function () {
+                let selected_cluster = d3.select(this).attr('value')
+                if (selected_cluster == 0) {
+                    selected_cluster = '눈길사고'
+                }
+                else if (selected_cluster == 1) {
+                    selected_cluster = '좌회전 차선 사고'
+                }
+                else if (selected_cluster == 2) {
+                    selected_cluster = '교차로가 아닌 차선의 사고'
+                }
+                else if (selected_cluster == 3) {
+                    selected_cluster = '우회전 차선 사고'
+                }
+                else {
+                    selected_cluster = '빗길사고'
+                }
+                onchange(selected_cluster)
+                onchange_2(selected_cluster)
+            })
 
-        d3.selectAll("input").on("change", function(){
-            onchange(cluster_name)
-        })
+        /* clustering vis output onclick event */
+        document.getElementById('hull_0').onclick = function () {
+            onchange_cluster('0', '눈길사고')
+        };
+        document.getElementById('hull_1').onclick = function () {
+            onchange_cluster('1', '좌회전 차선 사고')
+        };
+        document.getElementById('hull_2').onclick = function () {
+            onchange_cluster('2', '교차로가 아닌 차선의 사고')
+        };
+        document.getElementById('hull_3').onclick = function () {
+            onchange_cluster('3', '우회전 차선 사고')
+        };
+        document.getElementById('hull_4').onclick = function () {
+            onchange_cluster('4', '빗길사고')
+        };
+        /* Initial display */
+        selected_cluster = 'All';
+        let selectValue = 'SEX_CODE'
+        let pop_bar_data = data_by_selected_bar(total_bar_data, selectValue, selected_cluster)
+        updateBars(pop_bar_data, selectValue)
 
-        function onchange_cluster(selected_cluster) {
-            // console.log('selected cluster = ' + selected_cluster)
+        function onchange_cluster(selected_cluster, selected_cluster_text) {
+            /* 지혜 시작*/
+            console.log('selected cluster = ' + selected_cluster)
             let legends = document.getElementsByClassName('legend-cluster');
             for (var i = 0; i < legends.length; i++) {
                 item = legends[i];
                 item.style.fontWeight = '';
             }
             document.getElementById('cluster' + selected_cluster).style.fontWeight = '900';
-            // let pop_bar_data = data_by_selected_bar(total_bar_data, cate, selected_cluster)
-            // updateBars(pop_bar_data, cate)
+            /* REMOVE previous layers */
+            map.removeLayer('clusters-' + current_cluster + '-' + current_category);
+            map.removeLayer('cluster-count-' + current_cluster + '-' + current_category);
+
+            total_map_data = get_map_data(data22, selected_cluster, null, null);
+            makevis_map(total_map_data, selected_cluster, current_category);
+            onchange_category_all('title-category-all');
+            /* 지혜 끝 */
+
+            /* 지영 시작 */
+            let selectValue = 'SEX_CODE'
+            let pop_bar_data = data_by_selected_bar(total_bar_data, selectValue, selected_cluster_text)
+            updateBars(pop_bar_data, selectValue)
+            /* 지영 끝 */
         }
-        function onchange(category) {
-            let selectValue= d3.select('input[name="button_variable"]:checked').property("id")
-            let pop_bar_data = data_by_selected_bar(total_bar_data, selectValue, category)
+
+        function onchange(selected_cluster) {
+            let selectValue = d3.select('.select').property('value')
+            let pop_bar_data = data_by_selected_bar(total_bar_data, selectValue, selected_cluster)
             updateBars(pop_bar_data, selectValue)
         };
-        function onchange_2(selected_cluster){
-            d3.selectAll("rect").attr("stroke", "")
-            d3.select("rect[id='" + selected_cluster + "']")
-                .attr("stroke", "dimgrey")
-                .attr("stroke-width", 5)
-                .style("fill", function(){
-                return d3.rgb(d3.select(this).style("fill")).darker(5);
-                })
-        };
 
-        let initial_for_bar = data_by_selected_bar(total_bar_data, cate, cluster_name)
+        function onchange_2(selected_cluster) {
+            console.log(selected_cluster)
+            let test = d3.selectAll("rect")
+                .select("#눈길사고")
+                .attr("stroke-width", 10)
+            console.log(test)
+            //     .style("fill", function(){
+            //         console.log(d3.select(this))
+            //     return d3.rgb(d3.select(this).style("fill")).darker(1);
+            // })
+        };
+        let initial_for_bar = data_by_selected_bar(total_bar_data, cate, selected_cluster)
         updateBars(initial_for_bar, cate)
     };
-    
-    </script>
+    /* 지영 끝 */
+
+    /* 지혜 시작 */
+    let makevis_map = function (total_map_data, selected_cluster, selected_category) {
+        let timestamp_str = "'" + Date.now() + "'";
+
+        map.addSource(timestamp_str, {
+            type: 'geojson', data: total_map_data,
+            cluster: true,
+            clusterMaxZoom: 14, // Max zoom to cluster points on
+            clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+        });
+        map.addLayer({
+            id: "clusters-" + selected_cluster + '-' + selected_category,
+            type: "circle",
+            source: timestamp_str,
+            filter: ["has", "point_count"],
+            paint: {
+                // Use step expressions (https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+                "circle-color": [
+                    "step",
+                    ["get", "point_count"],
+                    "#ffffff",
+                    10,
+                    "#ffb3b3",
+                    50,
+                    "#ff6666",
+                    100,
+                    "#ff1a1a",
+                    300,
+                    "#800000"
+                ],
+                "circle-radius": [
+                    "step",
+                    ["get", "point_count"],
+                    20,
+                    100,
+                    30,
+                    750,
+                    40
+                ]
+            }
+        });
+
+        map.addLayer({
+            id: "cluster-count-" + selected_cluster + '-' + selected_category,
+            type: "symbol",
+            source: timestamp_str,
+            filter: ["has", "point_count"],
+            layout: {
+                "text-field": "{point_count_abbreviated}",
+                "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+                "text-size": 12
+            }
+        });
+
+        /*inspect a cluster on click*/
+        map.on('click', 'clusters-' + selected_cluster + '-' + selected_category, function (e) {
+            var features = map.queryRenderedFeatures(e.point, {layers: ['clusters-' + selected_cluster + '-' + selected_category]});
+            var clusterId = features[0].properties.cluster_id;
+            map.getSource(timestamp_str).getClusterExpansionZoom(clusterId, function (err, zoom) {
+                if (err)
+                    return;
+
+                map.easeTo({
+                    center: features[0].geometry.coordinates,
+                    zoom: zoom
+                });
+            });
+        });
+
+        map.on('mouseenter', 'clusters-' + selected_cluster + '-' + selected_category, function () {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', 'clusters-' + selected_cluster + '-' + selected_category, function () {
+            map.getCanvas().style.cursor = '';
+        });
+
+
+        current_cluster = selected_cluster;
+        current_category = selected_category;
+    };
+    /* 지혜 끝 */
+
+</script>
 </html>
-        
