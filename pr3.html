@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'/>
+    <title>v3.2_pr3+Map</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet'/>
     <style>
         .line {
             fill: none;
@@ -91,6 +95,72 @@
         path, circle:hover {
             cursor: pointer;
         }
+
+        /* map */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .options {
+            position: relative;
+            height: 10%;
+            font-size: 10px;
+        }
+
+        .button {
+            border: none;
+            color: black;
+            /*padding: 15px 32px;*/
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            /*font-size: 16px;*/
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        .button-small {
+            border: none;
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        #map {
+            position: absolute;
+            top: 40%;
+            left: 40%;
+            bottom: 0;
+            height: 50%;
+            width: 50%;
+        }
+
+        #title {
+            position: relative;
+            top: 80%;
+            left: 40%;
+            bottom: 0;
+            width: 450px;
+            height: 100px;
+            box-sizing: border-box;
+            border-color: rgba(65, 73, 80, 0.9);
+            border-width: medium;
+            border-style: solid;
+            /*padding: 8px 24px;*/
+            font-family: 'Ropa Sans', sans-serif;
+            font-size: 7pt;
+            color: rgba(229, 229, 216, 0.9);
+            text-align: center;
+            background: rgba(42, 54, 60, 0.9);
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+            z-index: 9999;
+            overflow: auto;
+        }
     </style>
 </head>
 <body>
@@ -106,11 +176,24 @@
     </form>
 </div>
 
+<div id='map'></div>
+<div id="title">
+    <input type="button" id="title-category-all" class="button-small button-category" value="All">
+    <div id="title-button-category"></div>
+    <br> Traffic Accident Counts of Maryland in 2015 January, February, March
+    <br>
+    <strong style="color: black; background-color:#ffffff">~ 10</strong> | <strong
+        style="color: black; background-color:#ffb3b3">11 ~ 50</strong> | <strong
+        style="color: black; background-color:#ff6666">51 ~ 100</strong> | <strong
+        style="color: black; background-color:#ff1a1a">101 ~ 300</strong> | <strong
+        style="color: black; background-color:#800000">301 ~</strong>
+</div>
+
 </body>
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-hierarchy.v1.min.js"></script>
 <script>
-    let button_cluster = d3.select("#button_cluster");
+    /* 지영 시작 */
     let margin = {top: 20, right: 20, bottom: 50, left: 40}
     let body = d3.select("body");
 
@@ -209,13 +292,326 @@
         return arr
     }
 
+    /* 지영 끝 */
+
+    /* 지혜 시작 */
+    /* map */
+    let button_cluster = d3.select("#button_cluster");
+    let title_button_category = d3.select("#title-button-category");
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoiamloeWVwYXJrIiwiYSI6ImNqZmtzazBpYjA5MWEzM25ndTEwank5ZTQifQ.G984GU_4hun02lWy7hMwkA';
+    let map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/jihyepark/cjpmatebe1p3y2sqrwmfsnpw5',
+        center: [-77.0944788, 38.8748153],
+        zoom: 5
+    });
+
+    function handle_map_data(feature_arr, x) {
+        let obj = {};
+        obj.type = "Feature";
+
+        let obj_geo = {}
+        obj_geo.type = "Point";
+        obj_geo.coordinates = [parseFloat(x.LONGITUDE), parseFloat(x.LATITUDE)];
+        obj.geometry = obj_geo;
+
+        let obj_prop = {};
+        obj_prop.KEY_INDEX = x.KEY_INDEX;
+        obj_prop.SEX_CODE = x.SEX_CODE;
+        obj.properties = obj_prop;
+
+        feature_arr.push(obj)
+        return feature_arr
+    }
+
+    function get_map_data(data, selected_cluster, selected_variable, selected_category) {
+        console.log('cluster:' + selected_cluster, '  /var:' + selected_variable + '  /cate:' + selected_category);
+
+        let selected_data = {};
+        selected_data.type = "FeatureCollection";
+        feature_arr = [];
+
+        data.forEach(function (x) {
+            if (selected_cluster === x.cluster || selected_cluster === 'All') {
+                if (selected_variable == null) {
+                    feature_arr = handle_map_data(feature_arr, x);
+                } else {
+                    if (selected_variable === 'SEX_CODE' && selected_category === x.SEX_CODE) {
+                        feature_arr = handle_map_data(feature_arr, x);
+                    } else if (selected_variable === 'DAMAGE_CODE' && selected_category === x.DAMAGE_CODE) {
+                        feature_arr = handle_map_data(feature_arr, x);
+                    } else if (selected_variable === 'INJ_SEVER_CODE' && selected_category === x.INJ_SEVER_CODE) {
+                        feature_arr = handle_map_data(feature_arr, x);
+                    } else if (selected_variable === 'AGE') {
+                        let age_category = parseInt(parseFloat(x.AGE) / 10)
+                        if (age_category >= 8) {
+                            age_category = 8
+                        }
+                        if (selected_category === age_category.toString()) {
+                            feature_arr = handle_map_data(feature_arr, x);
+                        }
+                    } else if (selected_variable === 'TIME') {
+                        let time_category = parseFloat(x.TIME.substring(11, x.TIME.indexOf(':')));
+                        if (time_category < 6) {
+                            time_category = '6'
+                        } else if (time_category < 12) {
+                            time_category = '12'
+                        } else if (time_category < 18) {
+                            time_category = '18'
+                        } else {
+                            time_category = '24'
+                        }
+                        if (selected_category === time_category) {
+                            feature_arr = handle_map_data(feature_arr, x);
+                        }
+
+                    }
+                }
+            }
+        });
+        selected_data.features = feature_arr;
+
+        console.log(selected_data);
+        return selected_data
+    }
+
+    /* 지혜 끝 */
+
     d3.csv("./clustering_dt_preprocessed_v.3.csv").then(function (data) {
+        /* 지영 시작 */
         let bar_category = "DAMAGE_CODE"
         let total_bar_data = get_bar_data(data);
         let total_treemap_data = toTree(get_treemap_data(data));
         // showmap(data)
         makevis(total_bar_data, bar_category, total_treemap_data);
+        /* 지영 끝 */
+
+        /* 지혜 시작 */
+        /* map initialize */
+        current_cluster = null;
+        current_category = null;
+
+        data22 = data
+
+        map.on('load', function () {
+            /* Initial display */
+            selected_cluster = 'All';
+            // document.getElementById('cluster4').style.fontWeight = '900';
+            selected_category = 'All';
+            document.getElementById('title-category-all').style.backgroundColor = '#4CAF50';
+            title_button_category.append('button')
+                .text('Male')
+                .attr('value', 'SEX_CODE-M')
+                .attr('class', 'button-small button-category')
+                .on("click", onchange_category);
+            title_button_category.append('button')
+                .text('Female')
+                .attr('value', 'SEX_CODE-F')
+                .attr('class', 'button-small button-category')
+                .on("click", onchange_category);
+            let total_map_data = get_map_data(data, selected_cluster, null, null);
+            makevis_map(total_map_data, selected_cluster, selected_category);
+        });
+
+        /* variable button options */
+        document.getElementById("SEX_CODE").onchange = function () {
+            onchange_variable('SEX_CODE')
+        };
+        document.getElementById("AGE").onchange = function () {
+            onchange_variable('AGE')
+        };
+        document.getElementById("DAMAGE_CODE").onchange = function () {
+            onchange_variable('DAMAGE_CODE')
+        };
+        document.getElementById("INJ_SEVER_CODE").onchange = function () {
+            onchange_variable('INJ_SEVER_CODE')
+        };
+        document.getElementById("TIME").onchange = function () {
+            onchange_variable('TIME')
+        };
+
+        function onchange_variable(selected_variable) {
+            onchange_category_all('title-category-all');
+
+            title_button_category.selectAll("*").remove();
+
+            if (selected_variable === 'SEX_CODE') {
+                title_button_category.append('button')
+                    .text('Male')
+                    .attr('value', 'SEX_CODE-M')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('Female')
+                    .attr('value', 'SEX_CODE-F')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+
+
+            } else if (selected_variable === 'AGE') {
+                title_button_category.append('button')
+                    .text('10대')
+                    .attr('value', 'AGE-1')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('20대')
+                    .attr('value', 'AGE-2')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('30대')
+                    .attr('value', 'AGE-3')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('40대')
+                    .attr('value', 'AGE-4')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('50대')
+                    .attr('value', 'AGE-5')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('60대')
+                    .attr('value', 'AGE-6')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('70대')
+                    .attr('value', 'AGE-7')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('80세 이상')
+                    .attr('value', 'AGE-8')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+
+            } else if (selected_variable === 'DAMAGE_CODE') {
+                title_button_category.append('button')
+                    .text('Destroyed')
+                    .attr('value', 'DAMAGE_CODE-Destroyed')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('Disabling')
+                    .attr('value', 'DAMAGE_CODE-Disabling')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('Functional')
+                    .attr('value', 'DAMAGE_CODE-Functional')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                // title_button_category.append('button')
+                //     .text('No damage')
+                //     .attr('value', 'DAMAGE_CODE-No damage')
+                //     .attr('class', 'button-small button-category')
+                //     .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('Superficial')
+                    .attr('value', 'DAMAGE_CODE-Superficial')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+
+            } else if (selected_variable === 'INJ_SEVER_CODE') {
+                title_button_category.append('button')
+                    .text('No Injury')
+                    .attr('value', 'INJ_SEVER_CODE-No Injury')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('Possible Incapacitating Injury')
+                    .attr('value', 'INJ_SEVER_CODE-Possible Incapacitating Injury')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('Incapacitating/Disabled Injury')
+                    .attr('value', 'INJ_SEVER_CODE-Incapacitating/Disabled Injury')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('Fatal Injury')
+                    .attr('value', 'INJ_SEVER_CODE-Fatal Injury')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+
+            } else if (selected_variable === 'TIME') {
+                title_button_category.append('button')
+                    .text('자정-새벽6시')
+                    .attr('value', 'TIME-6')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('새벽6시-낮12시')
+                    .attr('value', 'TIME-12')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('낮12시-오후6시')
+                    .attr('value', 'TIME-18')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+                title_button_category.append('button')
+                    .text('오후6시-자정')
+                    .attr('value', 'TIME-24')
+                    .attr('class', 'button-small button-category')
+                    .on("click", onchange_category);
+            }
+        }
+
+        /* category button */
+        document.getElementById("title-category-all").onclick = function () {
+            onchange_category_all(d3.select(this).property('id'));
+        };
+
+        function onchange_category() {
+            let buttons = document.getElementsByClassName('button-category')
+            for (var i = 0; i < buttons.length; i++) {
+                item = buttons[i]
+                item.style.backgroundColor = '';
+            }
+            d3.select(this).property('style').backgroundColor = '#4CAF50';
+
+            let selected_value = d3.select(this).property('value');
+            let values = selected_value.split('-');
+            let selected_variable = values[0];
+            let selected_category = values[1];
+
+            /* REMOVE previous layers */
+            map.removeLayer('clusters-' + current_cluster + '-' + current_category);
+            map.removeLayer('cluster-count-' + current_cluster + '-' + current_category);
+
+            let partial_map_data = get_map_data(data22, current_cluster, selected_variable, selected_category)
+            makevis_map(partial_map_data, current_cluster, selected_category);
+        }
+
+        /* 지혜 끝 */
     });
+
+    /* 지혜 시작 */
+    function onchange_category_all(clicked_id) {
+        let buttons = document.getElementsByClassName('button-category')
+        for (var i = 0; i < buttons.length; i++) {
+            item = buttons[i]
+            item.style.backgroundColor = '';
+        }
+        document.getElementById(clicked_id).style.backgroundColor = '#4CAF50';
+
+        /* REMOVE previous layers */
+        map.removeLayer('clusters-' + current_cluster + '-' + current_category);
+        map.removeLayer('cluster-count-' + current_cluster + '-' + current_category);
+
+        makevis_map(total_map_data, current_cluster, 'All');
+    }
+
+    /* 지혜 끝 */
+
+    /* 지영 시작 */
     let makevis = function (total_bar_data, cate, total_treemap_data) {
         current_cluster = null;
         current_category = null;
@@ -690,21 +1086,22 @@
                 onchange(selected_cluster)
                 onchange_2(selected_cluster)
             })
+
         /* clustering vis output onclick event */
         document.getElementById('hull_0').onclick = function () {
-            onchange_cluster(0, '눈길사고')
+            onchange_cluster('0', '눈길사고')
         };
         document.getElementById('hull_1').onclick = function () {
-            onchange_cluster(1, '좌회전 차선 사고')
+            onchange_cluster('1', '좌회전 차선 사고')
         };
         document.getElementById('hull_2').onclick = function () {
-            onchange_cluster(2, '교차로가 아닌 차선의 사고')
+            onchange_cluster('2', '교차로가 아닌 차선의 사고')
         };
         document.getElementById('hull_3').onclick = function () {
-            onchange_cluster(3, '우회전 차선 사고')
+            onchange_cluster('3', '우회전 차선 사고')
         };
         document.getElementById('hull_4').onclick = function () {
-            onchange_cluster(4, '빗길사고')
+            onchange_cluster('4', '빗길사고')
         };
         /* Initial display */
         selected_cluster = 'All';
@@ -721,6 +1118,13 @@
                 item.style.fontWeight = '';
             }
             // document.getElementById('cluster' + selected_cluster).style.fontWeight = '900';
+            /* REMOVE previous layers */
+            map.removeLayer('clusters-' + current_cluster + '-' + current_category);
+            map.removeLayer('cluster-count-' + current_cluster + '-' + current_category);
+
+            total_map_data = get_map_data(data22, selected_cluster, null, null);
+            makevis_map(total_map_data, selected_cluster, current_category);
+            onchange_category_all('title-category-all');
             /* 지혜 끝 */
 
             /* 지영 시작 */
@@ -750,6 +1154,89 @@
         let initial_for_bar = data_by_selected_bar(total_bar_data, cate, selected_cluster)
         updateBars(initial_for_bar, cate)
     };
+    /* 지영 끝 */
+
+    /* 지혜 시작 */
+    let makevis_map = function (total_map_data, selected_cluster, selected_category) {
+        let timestamp_str = "'" + Date.now() + "'";
+
+        map.addSource(timestamp_str, {
+            type: 'geojson', data: total_map_data,
+            cluster: true,
+            clusterMaxZoom: 14, // Max zoom to cluster points on
+            clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+        });
+        map.addLayer({
+            id: "clusters-" + selected_cluster + '-' + selected_category,
+            type: "circle",
+            source: timestamp_str,
+            filter: ["has", "point_count"],
+            paint: {
+                // Use step expressions (https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+                "circle-color": [
+                    "step",
+                    ["get", "point_count"],
+                    "#ffffff",
+                    10,
+                    "#ffb3b3",
+                    50,
+                    "#ff6666",
+                    100,
+                    "#ff1a1a",
+                    300,
+                    "#800000"
+                ],
+                "circle-radius": [
+                    "step",
+                    ["get", "point_count"],
+                    20,
+                    100,
+                    30,
+                    750,
+                    40
+                ]
+            }
+        });
+
+        map.addLayer({
+            id: "cluster-count-" + selected_cluster + '-' + selected_category,
+            type: "symbol",
+            source: timestamp_str,
+            filter: ["has", "point_count"],
+            layout: {
+                "text-field": "{point_count_abbreviated}",
+                "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+                "text-size": 12
+            }
+        });
+
+        /*inspect a cluster on click*/
+        map.on('click', 'clusters-' + selected_cluster + '-' + selected_category, function (e) {
+            var features = map.queryRenderedFeatures(e.point, {layers: ['clusters-' + selected_cluster + '-' + selected_category]});
+            var clusterId = features[0].properties.cluster_id;
+            map.getSource(timestamp_str).getClusterExpansionZoom(clusterId, function (err, zoom) {
+                if (err)
+                    return;
+
+                map.easeTo({
+                    center: features[0].geometry.coordinates,
+                    zoom: zoom
+                });
+            });
+        });
+
+        map.on('mouseenter', 'clusters-' + selected_cluster + '-' + selected_category, function () {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', 'clusters-' + selected_cluster + '-' + selected_category, function () {
+            map.getCanvas().style.cursor = '';
+        });
+
+
+        current_cluster = selected_cluster;
+        current_category = selected_category;
+    };
+    /* 지혜 끝 */
 
 </script>
 </html>
