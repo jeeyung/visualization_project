@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset='utf-8'/>
-    <title>v3.3_pr3+Map</title>
+    <title>v3.4_pr3+Map</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet'/>
@@ -352,7 +352,7 @@
                             feature_arr = handle_map_data(feature_arr, x);
                         }
                     } else if (selected_variable === 'TIME') {
-                        let time_category = parseFloat(x.TIME.substring(11, x.TIME.indexOf(':')));
+                        let time_category = parseFloat(x.TIME.substring(10, x.TIME.indexOf(':')));
                         if (time_category < 6) {
                             time_category = '6'
                         } else if (time_category < 12) {
@@ -402,12 +402,12 @@
             document.getElementById('title-category-all').style.backgroundColor = '#4CAF50';
             title_button_category.append('button')
                 .text('Male')
-                .attr('value', 'SEX_CODE-M')
+                .attr('value', 'SEX_CODE:M')
                 .attr('class', 'button-small button-category')
                 .on("click", onchange_category);
             title_button_category.append('button')
                 .text('Female')
-                .attr('value', 'SEX_CODE-F')
+                .attr('value', 'SEX_CODE:F')
                 .attr('class', 'button-small button-category')
                 .on("click", onchange_category);
             total_map_data = get_map_data(data, selected_cluster, null, null);
@@ -439,12 +439,12 @@
             if (selected_variable === 'SEX_CODE') {
                 title_button_category.append('button')
                     .text('Male')
-                    .attr('value', 'SEX_CODE-M')
+                    .attr('value', 'SEX_CODE:M')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('Female')
-                    .attr('value', 'SEX_CODE-F')
+                    .attr('value', 'SEX_CODE:F')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
 
@@ -452,123 +452,123 @@
             } else if (selected_variable === 'AGE') {
                 title_button_category.append('button')
                     .text('~9세 이하')
-                    .attr('value', 'AGE-0')
+                    .attr('value', 'AGE:0')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('10대')
-                    .attr('value', 'AGE-1')
+                    .attr('value', 'AGE:1')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('20대')
-                    .attr('value', 'AGE-2')
+                    .attr('value', 'AGE:2')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('30대')
-                    .attr('value', 'AGE-3')
+                    .attr('value', 'AGE:3')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('40대')
-                    .attr('value', 'AGE-4')
+                    .attr('value', 'AGE:4')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('50대')
-                    .attr('value', 'AGE-5')
+                    .attr('value', 'AGE:5')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('60대')
-                    .attr('value', 'AGE-6')
+                    .attr('value', 'AGE:6')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('70대')
-                    .attr('value', 'AGE-7')
+                    .attr('value', 'AGE:7')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('80세 이상')
-                    .attr('value', 'AGE-8')
+                    .attr('value', 'AGE:8')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
 
             } else if (selected_variable === 'DAMAGE_CODE') {
                 title_button_category.append('button')
                     .text('Destroyed')
-                    .attr('value', 'DAMAGE_CODE-Destroyed')
+                    .attr('value', 'DAMAGE_CODE:Destroyed')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('Disabling')
-                    .attr('value', 'DAMAGE_CODE-Disabling')
+                    .attr('value', 'DAMAGE_CODE:Disabling')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('Functional')
-                    .attr('value', 'DAMAGE_CODE-Functional')
+                    .attr('value', 'DAMAGE_CODE:Functional')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
-                    .text('No damage')
-                    .attr('value', 'DAMAGE_CODE-No damage')
+                    .text('No Damage')
+                    .attr('value', 'DAMAGE_CODE:No Damage')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('Superficial')
-                    .attr('value', 'DAMAGE_CODE-Superficial')
+                    .attr('value', 'DAMAGE_CODE:Superficial')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
 
             } else if (selected_variable === 'INJ_SEVER_CODE') {
                 title_button_category.append('button')
                     .text('No Injury')
-                    .attr('value', 'INJ_SEVER_CODE-No Injury')
+                    .attr('value', 'INJ_SEVER_CODE:No Injury')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('Possible Incapacitating Injury')
-                    .attr('value', 'INJ_SEVER_CODE-Possible Incapacitating Injury')
+                    .attr('value', 'INJ_SEVER_CODE:Possible Incapacitating Injury')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('Non-incapacitating Injury')
-                    .attr('value', 'INJ_SEVER_CODE-Non-incapacitating Injury')
+                    .attr('value', 'INJ_SEVER_CODE:Non-incapacitating Injury')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('Incapacitating/Disabled Injury')
-                    .attr('value', 'INJ_SEVER_CODE-Incapacitating/Disabled Injury')
+                    .attr('value', 'INJ_SEVER_CODE:Incapacitating/Disabled Injury')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('Fatal Injury')
-                    .attr('value', 'INJ_SEVER_CODE-Fatal Injury')
+                    .attr('value', 'INJ_SEVER_CODE:Fatal Injury')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
 
             } else if (selected_variable === 'TIME') {
                 title_button_category.append('button')
                     .text('자정-새벽6시')
-                    .attr('value', 'TIME-6')
+                    .attr('value', 'TIME:6')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('새벽6시-낮12시')
-                    .attr('value', 'TIME-12')
+                    .attr('value', 'TIME:12')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('낮12시-오후6시')
-                    .attr('value', 'TIME-18')
+                    .attr('value', 'TIME:18')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('오후6시-자정')
-                    .attr('value', 'TIME-24')
+                    .attr('value', 'TIME:24')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
             }
@@ -588,7 +588,7 @@
             d3.select(this).property('style').backgroundColor = '#4CAF50';
 
             let selected_value = d3.select(this).property('value');
-            let values = selected_value.split('-');
+            let values = selected_value.split(':');
             let selected_variable = values[0];
             let selected_category = values[1];
 
