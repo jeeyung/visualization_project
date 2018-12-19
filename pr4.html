@@ -154,7 +154,9 @@
 </head>
 <body>
 
-<div id="chart"><form><input type="button" value="cluster 전체" onClick="window.location.reload()"></form></div>
+<div id="chart">
+    <form><input type="button" value="cluster 전체" onClick="window.location.reload()"></form>
+</div>
 <div id="button_variable" class="options">
     <form>
         <input type='radio' name="button_variable" id="SEX_CODE" checked>성별</input>
@@ -1046,6 +1048,15 @@
         })
 
         function onchange_cluster(selected_cluster) {
+
+            /* 클릭된 클러스터 효과 */
+            let path_unclicked = document.getElementsByTagName('path');
+            for (var i = 0; i < path_unclicked.length; i++) {
+                item = path_unclicked[i];
+                item.style.opacity = '0.6';
+            }
+            document.getElementById('hull_' + selected_cluster).style.opacity = '1';
+
             // console.log('selected cluster = ' + selected_cluster)
             let legends = document.getElementsByClassName('legend-cluster');
             for (var i = 0; i < legends.length; i++) {
