@@ -1054,8 +1054,11 @@
             for (var i = 0; i < path_unclicked.length; i++) {
                 item = path_unclicked[i];
                 item.style.opacity = '0.6';
+                item.style.stroke = "";
             }
             document.getElementById('hull_' + selected_cluster).style.opacity = '1';
+            document.getElementById('hull_' + selected_cluster).style.stroke = 'black';
+            document.getElementById('hull_' + selected_cluster).style.strokeWidth = '2';
 
             // console.log('selected cluster = ' + selected_cluster)
             let legends = document.getElementsByClassName('legend-cluster');
