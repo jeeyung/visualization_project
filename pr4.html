@@ -237,13 +237,13 @@
             //parsing 필요
             let time_category = parseFloat(x.TIME.substring(10, x.TIME.indexOf(':')));
             if (time_category < 6) {
-                time_category = '6'
+                time_category = '오전 6시 이전'
             } else if (time_category < 12) {
-                time_category = '12'
+                time_category = '오전 6시~정오'
             } else if (time_category < 18) {
-                time_category = '18'
+                time_category = '정오~오후 6시'
             } else {
-                time_category = '24'
+                time_category = '오후 6시~자정'
             }
             obj.TIME = time_category 
 
@@ -251,6 +251,7 @@
             if (age_category >= 8) {
                 age_category = 8
             }
+            age_category = (age_category * 10).toString() + "대"
             obj.AGE = age_category
             arr.push(obj)
         })
@@ -792,9 +793,11 @@
             data.sort(function(a, b) {
                 return b.value- a.value;
             });
+            // console.log(data)
             x.domain(data.map(function (element) {
                 return element.key
             }))
+
             y.domain([0, d3.max(data, function (element) {
                 return element.value
             })])
