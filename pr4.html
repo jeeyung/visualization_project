@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset='utf-8'/>
-    <title>v3.5_pr3+Map</title>
+    <title>v4.0_final</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet'/>
@@ -12,69 +12,85 @@
             stroke: steelblue;
             stroke-width: 1.5px;
         }
+
         .hovered {
             stroke-width: 4px;
         }
+
         .root {
             fill: cadetblue;
             opacity: 0;
             stroke: white;
         }
+
         text {
             font-family: "Helvetica Neue", Helvetica, sans-serif;
             fill: black;
             font-size: 10px;
         }
+
         body {
             font: 10px sans-serif;
             position: relative;
         }
+
         .chart {
             display: block;
             margin: auto;
             margin-top: 40px;
         }
+
         .pt {
             stroke: black;
             stroke-width: 0.05mm
         }
+
         #stats {
             font-family: sans-serif;
             fill: #4d4d4d;
         }
+
         circle.cluster_0, path#hull_0, rect.눈길사고 {
             fill: #EF597B;
             opacity: 0.6
         }
+
         circle.cluster_1, path#hull_1, rect.좌회전.차선.사고 {
             fill: #FF6D31;
             opacity: 0.6
         }
+
         circle.cluster_2, path#hull_2, rect.교차로가.아닌.차선의.사고 {
             fill: #73B66B;
             opacity: 0.6
         }
+
         circle.cluster_3, path#hull_3, rect.우회전.차선.사고 {
             fill: #FFCB18;
             opacity: 0.6
         }
+
         circle.cluster_4, path#hull_4, rect.빗길사고 {
             fill: #29A2C6;
             opacity: 0.6
         }
+
         path, circle:hover {
             cursor: pointer;
         }
+
         /* map */
         body {
             margin: 0;
             padding: 0;
         }
+
         .options {
             position: relative;
             height: 10%;
             font-size: 10px;
         }
+
         .button {
             border: none;
             color: black;
@@ -86,6 +102,7 @@
             margin: 4px 2px;
             cursor: pointer;
         }
+
         .button-small {
             border: none;
             color: black;
@@ -95,6 +112,7 @@
             margin: 4px 2px;
             cursor: pointer;
         }
+
         #map {
             position: absolute;
             top: 10px;
@@ -103,6 +121,7 @@
             height: 400px;
             width: 400px;
         }
+
         #title {
             position: relative;
             top: -5px;
@@ -125,11 +144,12 @@
             z-index: 9999;
             overflow: auto;
         }
+
         .x.axis text {
-        font-family: sans-serif;
-        font-size: 8.3px;
+            font-family: sans-serif;
+            font-size: 8.3px;
         }
-       
+
     </style>
 </head>
 <body>
@@ -164,9 +184,11 @@
 <script>
 
     let body = d3.select("body");
+
     function translate(x, y) {
         return "translate(" + x + "," + y + ")";
     }
+
     function data_by_selected_bar(data, selected, selected_cluster) {
         if (selected_cluster == 'All') {
             selected_data = data
@@ -193,6 +215,7 @@
         // console.log(JSON.stringify(counted))
         return counted
     }
+
     function toTree(data) {
         let obj = {};
         obj.name = "maryland주 교통사고"
@@ -224,6 +247,7 @@
         }
         return obj
     }
+
     function get_bar_data(data) {
         let arr = [];
         data.forEach(function (x) {
@@ -237,15 +261,15 @@
             //parsing 필요
             let time_category = parseFloat(x.TIME.substring(10, x.TIME.indexOf(':')));
             if (time_category < 6) {
-                time_category = '오전 6시 이전'
+                time_category = '자정 ~ 오전 6시'
             } else if (time_category < 12) {
-                time_category = '오전 6시~정오'
+                time_category = '오전 6시 ~ 정오'
             } else if (time_category < 18) {
-                time_category = '정오~오후 6시'
+                time_category = '정오 ~ 오후 6시'
             } else {
-                time_category = '오후 6시~자정'
+                time_category = '오후 6시 ~ 자정'
             }
-            obj.TIME = time_category 
+            obj.TIME = time_category
 
             let age_category = parseInt(parseFloat(x.AGE) / 10)
             if (age_category >= 8) {
@@ -257,6 +281,7 @@
         })
         return arr
     }
+
     function get_treemap_data(data) {
         let arr = [];
         data.forEach(function (x) {
@@ -267,6 +292,7 @@
         })
         return arr
     }
+
     /* map */
     let button_cluster = d3.select("#button_cluster");
     let title_button_category = d3.select("#title-button-category");
@@ -277,6 +303,7 @@
         center: [-77.0944788, 38.8748153],
         zoom: 5
     });
+
     function handle_map_data(feature_arr, x) {
         let obj = {};
         obj.type = "Feature";
@@ -291,6 +318,7 @@
         feature_arr.push(obj)
         return feature_arr
     }
+
     function get_map_data(data, selected_cluster, selected_variable, selected_category) {
         // console.log('cluster:' + selected_cluster, '  /var:' + selected_variable + '  /cate:' + selected_category);
         let selected_data = {};
@@ -337,6 +365,7 @@
         // console.log(selected_data);
         return selected_data
     }
+
     d3.csv("./clustering_dt_preprocessed_v.3.csv").then(function (data) {
         let bar_category = d3.select('input[name="button_variable"]:checked').property("id")
         let total_bar_data = get_bar_data(data);
@@ -381,6 +410,7 @@
         document.getElementById("TIME").onchange = function () {
             onchange_variable('TIME')
         };
+
         function onchange_variable(selected_variable) {
             onchange_category_all('title-category-all');
             title_button_category.selectAll("*").remove();
@@ -396,11 +426,6 @@
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
             } else if (selected_variable === 'AGE') {
-                title_button_category.append('button')
-                    .text('~9세 이하')
-                    .attr('value', 'AGE:0')
-                    .attr('class', 'button-small button-category')
-                    .on("click", onchange_category);
                 title_button_category.append('button')
                     .text('10대')
                     .attr('value', 'AGE:1')
@@ -495,31 +520,33 @@
                     .on("click", onchange_category);
             } else if (selected_variable === 'TIME') {
                 title_button_category.append('button')
-                    .text('자정-새벽6시')
+                    .text('자정 ~ 오전6시')
                     .attr('value', 'TIME:6')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
-                    .text('새벽6시-낮12시')
+                    .text('오전6시 ~ 정오')
                     .attr('value', 'TIME:12')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
-                    .text('낮12시-오후6시')
+                    .text('정오 ~ 오후6시')
                     .attr('value', 'TIME:18')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
                 title_button_category.append('button')
-                    .text('오후6시-자정')
+                    .text('오후6시 - 자정')
                     .attr('value', 'TIME:24')
                     .attr('class', 'button-small button-category')
                     .on("click", onchange_category);
             }
         }
+
         /* category button */
         document.getElementById("title-category-all").onclick = function () {
             onchange_category_all(d3.select(this).property('id'));
         };
+
         function onchange_category() {
             let buttons = document.getElementsByClassName('button-category')
             for (var i = 0; i < buttons.length; i++) {
@@ -538,6 +565,7 @@
             makevis_map(partial_map_data, current_cluster, selected_category);
         }
     });
+
     function onchange_category_all(clicked_id) {
         let buttons = document.getElementsByClassName('button-category')
         for (var i = 0; i < buttons.length; i++) {
@@ -550,6 +578,7 @@
         map.removeLayer('cluster-count-' + current_cluster + '-' + current_category);
         makevis_map(total_map_data, current_cluster, 'All');
     }
+
     let makevis = function (total_bar_data, cate, total_treemap_data, selected_cluster) {
         current_cluster = null;
         current_category = null;
@@ -607,6 +636,7 @@
                 costs.push(cost)
             }, 500);
         });
+
         function displayStats(costs) {
             var stats = svg_plot.append("g")
                 .attr("id", "stats");
@@ -690,6 +720,7 @@
             legend_2.append("tspan")
                 .text("교차로가 아닌 차선의 사고");
         }
+
         function computeCentroids() {
             var centroids = clusters.map(cluster => {
                 var d = d3.selectAll(".cluster_" + cluster)
@@ -701,6 +732,7 @@
             });
             return centroids;
         }
+
         /* set path */
         function addHull() {
             clusters.forEach(cluster => {
@@ -719,12 +751,14 @@
                     .attr("d", d_path === null ? null : "M" + d_path.join("L") + "Z")
             });
         }
+
         function computeCost() {
             var dists = d3.selectAll("circle")
                 .data()
                 .map(d => d._dist);
             return d3.sum(dists);
         }
+
         function assignCluster(centroids) {
             d3.selectAll("circle")
                 .each(function (d) {
@@ -741,6 +775,7 @@
                         .attr("class", "pt cluster_" + cluster_num);
                 });
         }
+
         function computeDistances(centroids, d_pt) {
             var dists = centroids.map(centroid => {
                 var dist = Math.sqrt(Math.pow(d_pt.x - centroid.x, 2) + Math.pow(d_pt.y - centroid.y, 2));
@@ -748,10 +783,12 @@
             })
             return dists;
         }
+
         function setScaleDomains(d) {
             plot_x.domain(d3.extent(d, d => d.x));
             plot_y.domain(d3.extent(d, d => d.y));
         }
+
         function plotCircles(d) {
             circles.selectAll("circle")
                 .data(d)
@@ -766,6 +803,7 @@
                 });
             ;
         }
+
         //bar
         // console.log(margin.left)
         margin = {top: 20, right: 100, bottom: 50, left: 100}
@@ -782,7 +820,7 @@
         let color = d3.scaleOrdinal(d3.schemeCategory10);
         let xAxis = svg.append("g")
             .attr("class", "x axis")
-            .attr("transform", translate(0, bar_height)) 
+            .attr("transform", translate(0, bar_height))
             .call(d3.axisBottom(x));
 
         let yAxis = svg.append("g")
@@ -790,8 +828,8 @@
             .call(d3.axisLeft(y));
         let updateBars = function (data, category) {
             // console.log(cluster)
-            data.sort(function(a, b) {
-                return b.value- a.value;
+            data.sort(function (a, b) {
+                return b.value - a.value;
             });
             // console.log(data)
             x.domain(data.map(function (element) {
@@ -904,6 +942,7 @@
             .style("opacity", function (d) {
                 return d.leaves().length == 4 ? 1 : 0
             });
+
         function zoom(d) {
             let dx = d.x1 - d.x0
             let dy = d.y1 - d.y0
@@ -916,8 +955,8 @@
                     return "translate(" + [x2(d.x0), y2(d.y0)] + ")";
                 });
             t.select("rect")
-                .attr("class", function(d) {
-                    return kx==1?d.data.name:d.parent.data.name;
+                .attr("class", function (d) {
+                    return kx == 1 ? d.data.name : d.parent.data.name;
                 })
                 .attr("width", function (d) {
                     return kx * (d.x1 - d.x0) - 1;
@@ -974,6 +1013,7 @@
             n = d;
             d3.event.stopPropagation();
         }
+
         d3.select(window).on("click", function () {
             zoom(root);
         });
@@ -1001,7 +1041,7 @@
                 onchange_bar(selected_cluster)
                 onchange_treemap(selected_cluster)
             })
-        d3.selectAll("input").on("change", function(){
+        d3.selectAll("input").on("change", function () {
             onchange_bar(selected_cluster)
         })
 
@@ -1020,12 +1060,14 @@
             makevis_map(total_map_data, selected_cluster, current_category);
             onchange_category_all('title-category-all');
         }
+
         function onchange_bar(category) {
-            let selectValue= d3.select('input[name="button_variable"]:checked').property("id")
+            let selectValue = d3.select('input[name="button_variable"]:checked').property("id")
             let pop_bar_data = data_by_selected_bar(total_bar_data, selectValue, category)
             updateBars(pop_bar_data, selectValue)
         };
-        function onchange_treemap(selected_cluster){
+
+        function onchange_treemap(selected_cluster) {
             d3.selectAll("rect").attr("stroke", "")
             d3.select("rect[class='" + selected_cluster + "']")
                 .attr("stroke", "dimgrey")
