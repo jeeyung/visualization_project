@@ -29,21 +29,6 @@
             font: 10px sans-serif;
             position: relative;
         }
-        .node {
-            box-sizing: border-box;
-            position: absolute;
-            overflow: hidden;
-        }
-        .node-label {
-            padding: 4px;
-            line-height: 1em;
-            white-space: pre;
-        }
-        .node-value {
-            color: rgba(0, 0, 0, 0.8);
-            font-size: 9px;
-            margin-top: 1px;
-        }
         .chart {
             display: block;
             margin: auto;
@@ -51,30 +36,31 @@
         }
         .pt {
             stroke: black;
+            stroke-width: 0.05mm
         }
         #stats {
             font-family: sans-serif;
             fill: #4d4d4d;
         }
-        circle.cluster_0, path#hull_0 {
+        circle.cluster_0, path#hull_0, rect.눈길사고 {
             fill: #EF597B;
-            opacity: 0.7
+            opacity: 0.6
         }
-        circle.cluster_1, path#hull_1 {
+        circle.cluster_1, path#hull_1, rect.좌회전.차선.사고 {
             fill: #FF6D31;
-            opacity: 0.7
+            opacity: 0.6
         }
-        circle.cluster_2, path#hull_2 {
+        circle.cluster_2, path#hull_2, rect.교차로가.아닌.차선의.사고 {
             fill: #73B66B;
-            opacity: 0.7
+            opacity: 0.6
         }
-        circle.cluster_3, path#hull_3 {
+        circle.cluster_3, path#hull_3, rect.우회전.차선.사고 {
             fill: #FFCB18;
-            opacity: 0.7
+            opacity: 0.6
         }
-        circle.cluster_4, path#hull_4 {
+        circle.cluster_4, path#hull_4, rect.빗길사고 {
             fill: #29A2C6;
-            opacity: 0.7
+            opacity: 0.6
         }
         path, circle:hover {
             cursor: pointer;
@@ -139,6 +125,11 @@
             z-index: 9999;
             overflow: auto;
         }
+        .x.axis text {
+        font-family: sans-serif;
+        font-size: 8.3px;
+        }
+       
     </style>
 </head>
 <body>
@@ -171,7 +162,7 @@
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-hierarchy.v1.min.js"></script>
 <script>
-    let margin = {top: 20, right: 20, bottom: 50, left: 40}
+
     let body = d3.select("body");
     function translate(x, y) {
         return "translate(" + x + "," + y + ")";
@@ -271,10 +262,6 @@
             let obj = {};
             obj.first_label = x.first_label
             obj.second_labeling = x.second_labeling
-            // obj.SEX_CODE = x.SEX_CODE
-            // obj.DAMAGE_CODE = x.DAMAGE_CODE
-            // obj.TIME = x.TIME
-            // obj.AGE = x.AGE
             arr.push(obj)
         })
         return arr
@@ -351,7 +338,6 @@
     }
     d3.csv("./clustering_dt_preprocessed_v.3.csv").then(function (data) {
         let bar_category = d3.select('input[name="button_variable"]:checked').property("id")
-        // let bar_category = "SEX_CODE"
         let total_bar_data = get_bar_data(data);
         let total_treemap_data = toTree(get_treemap_data(data));
         let cluster_name = "All"
@@ -563,7 +549,7 @@
         map.removeLayer('cluster-count-' + current_cluster + '-' + current_category);
         makevis_map(total_map_data, current_cluster, 'All');
     }
-    let makevis = function (total_bar_data, cate, total_treemap_data, cluster_name) {
+    let makevis = function (total_bar_data, cate, total_treemap_data, selected_cluster) {
         current_cluster = null;
         current_category = null;
         /* kmeans clustering */
@@ -780,7 +766,9 @@
             ;
         }
         //bar
-        let bar_width = 500 - margin.left - margin.right;
+        // console.log(margin.left)
+        margin = {top: 20, right: 100, bottom: 50, left: 100}
+        let bar_width = 700 - margin.left - margin.right;
         let bar_height = 300 - margin.top - margin.bottom;
         let svg = body.append("svg")
             .attr("width", bar_width + margin.left + margin.right)
@@ -793,13 +781,17 @@
         let color = d3.scaleOrdinal(d3.schemeCategory10);
         let xAxis = svg.append("g")
             .attr("class", "x axis")
-            .attr("transform", translate(0, bar_height))
+            .attr("transform", translate(0, bar_height)) 
             .call(d3.axisBottom(x));
+
         let yAxis = svg.append("g")
             .attr("class", "y axis")
             .call(d3.axisLeft(y));
         let updateBars = function (data, category) {
             // console.log(cluster)
+            data.sort(function(a, b) {
+                return b.value- a.value;
+            });
             x.domain(data.map(function (element) {
                 return element.key
             }))
@@ -879,18 +871,15 @@
             });
         node
             .append('rect')
-            .attr('id', (d, i) => d.data.name)
+            .attr('class', (d, i) => d.data.name)
             .attr('width', function (d) {
                 return d.x1 - d.x0;
             })
             .attr('height', function (d) {
                 return d.y1 - d.y0;
             })
-            .style("fill", function (d) {
-                return color_for_treemap(d.data.name);
-            })
             .style("opacity", function (d) {
-                return d.leaves().length == 4 ? 1 : 0
+                return d.leaves().length == 4 ? 0.8 : 0
             });
         node
             .append('text')
@@ -924,19 +913,19 @@
                     return "translate(" + [x2(d.x0), y2(d.y0)] + ")";
                 });
             t.select("rect")
+                .attr("class", function(d) {
+                    return kx==1?d.data.name:d.parent.data.name;
+                })
                 .attr("width", function (d) {
                     return kx * (d.x1 - d.x0) - 1;
                 })
                 .attr("height", function (d) {
                     return ky * (d.y1 - d.y0) - 1;
                 })
-                .style("fill", function (d) {
-                    return color_for_treemap(kx == 1 ? d.data.name : d.parent.data.name);
-                })
                 .style("opacity", function (d) {
                     if (kx == 1) {
                         if (d.leaves().length == 4) {
-                            return 1
+                            return 0.8
                         }
                         else {
                             return 0
@@ -947,7 +936,7 @@
                             return 0
                         }
                         else {
-                            return 1
+                            return 0.8
                         }
                     }
                 });
@@ -989,7 +978,7 @@
         //interactive
         d3.selectAll('.hull')
             .on("click", function () {
-                let selected_cluster = d3.select(this).attr('value')
+                selected_cluster = d3.select(this).attr('value')
                 onchange_cluster(selected_cluster)
                 if (selected_cluster == 0) {
                     selected_cluster = '눈길사고'
@@ -1010,7 +999,7 @@
                 onchange_treemap(selected_cluster)
             })
         d3.selectAll("input").on("change", function(){
-            onchange_bar(cluster_name)
+            onchange_bar(selected_cluster)
         })
 
         function onchange_cluster(selected_cluster) {
@@ -1035,14 +1024,11 @@
         };
         function onchange_treemap(selected_cluster){
             d3.selectAll("rect").attr("stroke", "")
-            d3.select("rect[id='" + selected_cluster + "']")
+            d3.select("rect[class='" + selected_cluster + "']")
                 .attr("stroke", "dimgrey")
                 .attr("stroke-width", 5)
-                .style("fill", function(){
-                return d3.rgb(d3.select(this).style("fill")).darker(5);
-                })
         };
-        let initial_for_bar = data_by_selected_bar(total_bar_data, cate, cluster_name)
+        let initial_for_bar = data_by_selected_bar(total_bar_data, cate, selected_cluster)
         updateBars(initial_for_bar, cate)
     };
     let makevis_map = function (total_map_data, selected_cluster, selected_category) {
