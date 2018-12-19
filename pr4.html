@@ -622,18 +622,18 @@
             plotCircles(d);
             /* set path */
             addHull();
-            costs.push(computeCost());
+            // costs.push(computeCost());
             var iterate = d3.interval(() => {
                 var c = computeCentroids();
                 assignCluster(c);
                 addHull();
-                var cost = computeCost();
+                // var cost = computeCost();
                 // stop iterating when algorithm coverges to local minimum
-                if (cost == costs[costs.length - 1]) {
-                    displayStats(costs);
-                    iterate.stop();
-                }
-                costs.push(cost)
+                // if (cost == costs[costs.length - 1]) {
+                displayStats(costs);
+                iterate.stop();
+                // }
+                // costs.push(cost)
             }, 500);
         });
 
@@ -644,10 +644,10 @@
             var n_iters = stats.append("text")
                 .attr("x", 10)
                 .attr("y", 20);
-            n_iters.append("tspan")
-                .text("Num. Iterations: ");
-            n_iters.append("tspan")
-                .text(costs.length);
+            // n_iters.append("tspan")
+            //     .text("Num. Iterations: ");
+            // n_iters.append("tspan")
+            //     .text(costs.length);
             /* legend */
             /* cluster 4 */
             svg_plot.append('rect')
