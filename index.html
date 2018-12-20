@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset='utf-8'/>
-    <title>v4.1_final</title>
+    <title>v5.0_final</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet'/>
@@ -115,7 +115,7 @@
 
         #map {
             position: absolute;
-            top: 10px;
+            top: 410px;
             left: 60%;
             bottom: 0;
             height: 400px;
@@ -124,7 +124,7 @@
 
         #title {
             position: relative;
-            top: -5px;
+            top: 375px;
             left: 60%;
             bottom: 0;
             width: 400px;
@@ -148,6 +148,13 @@
         .x.axis text {
             font-family: sans-serif;
             font-size: 6.9px;
+        }
+
+        /* 컴포넌트 위치 수정 */
+        svg.treemap_ {
+            position: absolute;
+            top: 10px;
+            left: 60%;
         }
 
     </style>
@@ -396,6 +403,11 @@
             total_map_data = get_map_data(data, selected_cluster, null, null);
             makevis_map(total_map_data, selected_cluster, selected_category);
         });
+
+        /* 컴포넌트 위치 수정 */
+        let temp_svgs = document.getElementsByTagName('svg');
+        temp_svgs[temp_svgs.length - 1].classList.add('treemap_')
+
         /* variable button options */
         document.getElementById("SEX_CODE").onchange = function () {
             onchange_variable('SEX_CODE')
@@ -1162,5 +1174,7 @@
         current_cluster = selected_cluster;
         current_category = selected_category;
     };
+
+
 </script>
 </html>
