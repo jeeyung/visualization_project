@@ -831,7 +831,7 @@
         //bar-chart
         let x = d3.scaleBand().range([0, bar_width])
         let y = d3.scaleLinear().range([bar_height, 0])
-        let color = d3.scaleOrdinal(d3.schemeCategory10);
+        // let color = d3.scaleOrdinal(d3.schemeCategory10);
         let xAxis = svg.append("g")
             .attr("class", "x axis")
             .attr("transform", translate(0, bar_height))
@@ -841,15 +841,21 @@
             .attr("class", "y axis")
             .call(d3.axisLeft(y));
         let updateBars = function (data, category) {
-            // console.log(cluster)
-            data.sort(function (a, b) {
-                return b.value - a.value;
-            });
-            // console.log(data)
-            x.domain(data.map(function (element) {
-                return element.key
-            }))
-
+            if (category == "AGE"){
+                x.domain(["10대", "20대", "30대", "40대", "50대","60대","70대","80대"])
+            }
+            else if (category == "SEX_CODE"){
+                x.domain(["M", "F"])
+            }
+            else if (category == "TIME"){
+                x.domain(["자정 ~ 오전 6시", "오전 6시 ~ 정오", "정오 ~ 오후 6시", "오후 6시 ~ 자정"])
+            }
+            else if (category =="DAMAGE_CODE"){
+                x.domain(["Disabling", "Superficial", "Functional", "No Damage", "Destroyed"])
+            }
+            else if (category=="INJ_SEVER_CODE"){
+                x.domain(["No injury", "Possible Incapacitating Injury", "Non-incapacitating Injury", "Incapacitating/Disabled Injury", "Fatal Injury"])
+            }
             y.domain([0, d3.max(data, function (element) {
                 return element.value
             })])
@@ -867,7 +873,8 @@
                 .attr("class", "bar")
                 .attr("width", x.bandwidth())
                 .attr("height", d => bar_height - y(d.value))
-                .style("fill", (d, i) => color(i))
+                .style("fill", "#D6D6D4")
+                .style("stroke", "#60605F")
                 .attr("transform", d => translate(x(d.key), y(d.value)))
                 .style("opacity", 0)
                 .attr("id", function (d) {
@@ -878,7 +885,8 @@
                 .duration(1000)
                 .attr("width", x.bandwidth())
                 .attr("height", d => bar_height - y(d.value))
-                .style("fill", (d, i) => color(i))
+                .style("fill", "#D6D6D4")
+                .style("stroke", "#60605F")
                 .attr("transform", d => translate(x(d.key), y(d.value)))
             enter_bar.transition().duration(1000).delay(100).style("opacity", 1)
         };
